@@ -1,0 +1,39 @@
+# ==============================================================================
+# Preset: gemma-max
+# Goal: deepest Gemma preset in this repo for long answers and heavy reasoning.
+# Tradeoff: highest latency of the standard 32K Gemma ladder.
+# ==============================================================================
+
+gemma-4-26B-A4B-it-Q8_0:
+  context-window: 32768
+  nbatch: 2048
+  nubatch: 2048
+  nthreads: 16
+  nthreads-batch: 16
+  nseq-max: 1
+  cache-type-k: q4_0
+  cache-type-v: q4_0
+  flash-attention: enabled
+  sampling-parameters:
+    temperature: 0.2
+    top_k: 40
+    top_p: 0.95
+    max_tokens: 4096
+    enable_thinking: true
+
+Qwen3.6-35B-A3B-UD-Q4_K_M:
+  context-window: 65536
+  nbatch: 2048
+  nubatch: 2048
+  nthreads: 16
+  nthreads-batch: 16
+  nseq-max: 2
+  cache-type-k: q4_0
+  cache-type-v: q4_0
+  flash-attention: enabled
+  sampling-parameters:
+    temperature: 0.2
+    top_k: 40
+    top_p: 0.95
+    max_tokens: 4096
+    enable_thinking: true

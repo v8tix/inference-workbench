@@ -1,0 +1,109 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "provider": {
+    "kronk": {
+      "name": "Kronk Local",
+      "api": "openai",
+      "env": [
+        "KRONK_BASE_PATH"
+      ],
+      "options": {
+        "baseURL": "http://localhost:11435/v1"
+      },
+      "models": {
+        "gemma-turbo": {
+          "id": "gemma-4-26B-A4B-it-Q8_0",
+          "name": "Gemma Turbo",
+          "family": "gemma",
+          "limit": {
+            "context": 32768,
+            "output": 512
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        },
+        "gemma-fast": {
+          "id": "gemma-4-26B-A4B-it-Q8_0",
+          "name": "Gemma Fast",
+          "family": "gemma",
+          "limit": {
+            "context": 32768,
+            "output": 1024
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        },
+        "gemma-standard": {
+          "id": "gemma-4-26B-A4B-it-Q8_0",
+          "name": "Gemma Standard",
+          "family": "gemma",
+          "limit": {
+            "context": 32768,
+            "output": 2048
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        },
+        "gemma-deep": {
+          "id": "gemma-4-26B-A4B-it-Q8_0",
+          "name": "Gemma Deep",
+          "family": "gemma",
+          "limit": {
+            "context": 32768,
+            "output": 2048
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        },
+        "gemma-max": {
+          "id": "gemma-4-26B-A4B-it-Q8_0",
+          "name": "Gemma Max",
+          "family": "gemma",
+          "limit": {
+            "context": 32768,
+            "output": 4096
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        },
+        "gemma-4-26b-a4b": {
+          "id": "gemma-4-26B-A4B-it-Q8_0",
+          "name": "Gemma 4 26B A4B",
+          "family": "gemma",
+          "limit": {
+            "context": 65536,
+            "output": 4096
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        },
+        "qwen3.6-35b-a3b": {
+          "id": "Qwen3.6-35B-A3B-UD-Q4_K_M",
+          "name": "Qwen3.6 35B A3B",
+          "family": "qwen",
+          "limit": {
+            "context": 65536,
+            "output": 4096
+          },
+          "cost": {
+            "input": 0,
+            "output": 0
+          }
+        }
+      }
+    }
+  },
+  "model": "kronk/gemma-fast"
+}

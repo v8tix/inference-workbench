@@ -1,0 +1,5 @@
+# Kronk logs
+logs/
+
+# macOS
+.DS_Store
