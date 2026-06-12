@@ -1,4 +1,4 @@
-# local-llm-infra
+# inference-workbench
 
 Friendly local infrastructure for running **Kronk** on a **macOS Apple Silicon** machine with a **profile-based** model setup.
 
