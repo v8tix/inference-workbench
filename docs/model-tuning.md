@@ -5,7 +5,7 @@ This guide is the friendly version of what the logs taught us:
 - **big prompts slow Kronk down**
 - **long outputs slow Kronk down**
 - **compaction is your friend**
-- **32K is the best daily default here**
+- **32K speed presets (`gemma-turbo` / `gemma-fast`) are the fastest baseline; standard and depth presets run at 64K**
 
 On this Mac, the fastest improvement usually comes from **changing how the prompt is built**, not from blindly increasing context.
 
@@ -133,10 +133,13 @@ These presets are now about **speed vs depth**, not about chasing the biggest ra
 
 All Gemma presets below use:
 
-- **32K context**
-- **`nseq-max: 1`**
+- **32K on `gemma-turbo` / `gemma-fast`**
+- **64K on `gemma-standard` / `gemma-deep` / `gemma-max`**
+- **`nseq-max: 2`**
 - `q4_0` KV cache
 - flash attention enabled
+
+> **Note:** `nseq-max: 1` was briefly used but caused `context canceled` errors on concurrent requests from OpenCode (second slot had no room while a long prefill was in progress). All presets are back to `nseq-max: 2`.
 
 ### 🏷️ Preset naming convention
 
@@ -152,18 +155,30 @@ Naming rule:
 
 ### ⚡ Speed presets
 
-| Preset | Thinking | `max_tokens` | Best for |
-|---|---|---:|---|
-| `gemma-turbo` | off | 512 | ultra-fast iteration |
-| `gemma-fast` | off | 1024 | quick coding help |
-| `gemma-standard` | off | 2048 | daily default |
+| Preset | Context | Thinking | `max_tokens` | Best for |
+|---|---:|---|---:|---|
+| `gemma-turbo` | 32K | off | 512 | ultra-fast iteration |
+| `gemma-fast` | 32K | off | 1024 | quick coding help |
+| `gemma-standard` | 64K | off | 2048 | daily default |
 
 ### 🧠 Depth presets
 
-| Preset | Thinking | `max_tokens` | Best for |
-|---|---|---:|---|
-| `gemma-deep` | on | 2048 | trickier debugging and design |
-| `gemma-max` | on | 4096 | long deep answers |
+| Preset | Context | Thinking | `max_tokens` | Best for |
+|---|---:|---|---:|---|
+| `gemma-deep` | 64K | on | 2048 | trickier debugging and design |
+| `gemma-max` | 64K | on | 4096 | long deep answers |
+
+### 🔗 OpenCode ↔ Kronk alignment
+
+OpenCode declares `limit.context` and `limit.output` per preset in `opencode/opencode.jsonc`. These **must match** the Kronk preset values. A mismatch is the root cause of context overflow errors — OpenCode fills up to its declared limit while Kronk enforces a lower actual cap.
+
+| Preset | opencode `limit.context` | Kronk `context-window` | opencode `limit.output` | Kronk `max_tokens` |
+|---|---:|---:|---:|---:|
+| `gemma-turbo` | 32768 | 32768 | 512 | 512 |
+| `gemma-fast` | 32768 | 32768 | 1024 | 1024 |
+| `gemma-standard` | 65536 | 65536 | 2048 | 2048 |
+| `gemma-deep` | 65536 | 65536 | 2048 | 2048 |
+| `gemma-max` | 65536 | 65536 | 4096 | 4096 |
 
 ### Recommended default
 
@@ -244,6 +259,23 @@ That order matches both:
 
 ---
 
+## 📊 What healthy `gemma-standard` looks like
+
+A well-configured `gemma-standard` session with a typical agentic context (~43K tokens, IMC cache warm) should produce numbers in this range:
+
+| Metric | Expected |
+|---|---|
+| IMC cache restored | ~90 ms |
+| TTFT (time to first token) | 1.7 – 2.5 s |
+| TPS (tokens per second) | ~27 |
+| Total elapsed (agentic turn) | 7 – 30 s |
+| Context usage | 60 – 70% of 64K |
+| Errors | none |
+
+If numbers drift far outside this range, check prompt size first, then whether the session has grown past a healthy context load.
+
+---
+
 ## 🛠️ Commands
 
 Preferred preset names:
@@ -273,7 +305,7 @@ This shape was stable, but it let active coding sessions become expensive once p
 
 It helped preserve very long raw sessions, but once OpenCode compaction behavior became clear, the better daily conclusion was:
 
-- **prefer 32K**
+- **prefer the 32K presets for speed**
 - **compact earlier**
 - **keep the working set tighter**
 
@@ -291,7 +323,7 @@ bash scripts/apply_llm_profile.sh gemma-standard
 
 For this repo and this machine:
 
-- **32K + compaction** beats giant raw sessions
+- **32K speed presets + compaction** beat giant raw sessions
 - **prompt hygiene** is a first-class tuning tool
 - **shorter outputs** are often the next win after fixing prompt bloat
 - **`gemma-standard`** should be the daily preset

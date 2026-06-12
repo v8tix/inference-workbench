@@ -42,7 +42,7 @@
           "name": "Gemma Standard",
           "family": "gemma",
           "limit": {
-            "context": 32768,
+            "context": 65536,
             "output": 2048
           },
           "cost": {
@@ -55,7 +55,7 @@
           "name": "Gemma Deep",
           "family": "gemma",
           "limit": {
-            "context": 32768,
+            "context": 65536,
             "output": 2048
           },
           "cost": {
@@ -68,7 +68,7 @@
           "name": "Gemma Max",
           "family": "gemma",
           "limit": {
-            "context": 32768,
+            "context": 65536,
             "output": 4096
           },
           "cost": {
@@ -105,5 +105,5 @@
       }
     }
   },
-  "model": "kronk/gemma-fast"
+  "model": "kronk/gemma-standard"
 }

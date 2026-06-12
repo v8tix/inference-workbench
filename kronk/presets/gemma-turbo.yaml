@@ -10,7 +10,7 @@ gemma-4-26B-A4B-it-Q8_0:
   nubatch: 2048
   nthreads: 16
   nthreads-batch: 16
-  nseq-max: 1
+  nseq-max: 2
   cache-type-k: q4_0
   cache-type-v: q4_0
   flash-attention: enabled

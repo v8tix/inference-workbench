@@ -205,14 +205,14 @@ Available Gemma presets follow two naming groups:
 
 Speed presets:
 
-- `gemma-turbo` = 32K, `nseq-max: 1`, thinking off, `max_tokens: 512`
-- `gemma-fast` = 32K, `nseq-max: 1`, thinking off, `max_tokens: 1024`
-- `gemma-standard` = 32K, `nseq-max: 1`, thinking off, `max_tokens: 2048`
+- `gemma-turbo` = 32K, `nseq-max: 2`, thinking off, `max_tokens: 512`
+- `gemma-fast` = 32K, `nseq-max: 2`, thinking off, `max_tokens: 1024`
+- `gemma-standard` = 64K, `nseq-max: 2`, thinking off, `max_tokens: 2048`
 
 Depth presets:
 
-- `gemma-deep` = 32K, `nseq-max: 1`, thinking on, `max_tokens: 2048`
-- `gemma-max` = 32K, `nseq-max: 1`, thinking on, `max_tokens: 4096`
+- `gemma-deep` = 64K, `nseq-max: 2`, thinking on, `max_tokens: 2048`
+- `gemma-max` = 64K, `nseq-max: 2`, thinking on, `max_tokens: 4096`
 
 The tuning switcher updates the active `kronk/kronk.model_config.yaml` and syncs `KRONK_TUNING_PROFILE` in `.env`.
 Restart Kronk after switching to apply the new preset.
@@ -277,6 +277,7 @@ If startup fails:
 | `kronk/kronk.model_config.yaml` | Model tuning and context settings |
 | `docs/profiles-guide.md` | More detail on the profile workflow |
 | `docs/model-tuning.md` | Notes about context, RAM, and practical tuning on this machine |
+| `docs/gemma_tunning_guide.md` | Friendly preset guide for sharing with teammates |
 
 ## Notes
 

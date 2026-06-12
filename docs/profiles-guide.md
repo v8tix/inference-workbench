@@ -41,23 +41,24 @@ Naming rule:
 
 ### ⚡ Speed presets
 
-| Preset | Thinking | `max_tokens` | Best for |
-|---|---|---:|---|
-| `gemma-turbo` | off | 512 | fastest loop |
-| `gemma-fast` | off | 1024 | quick coding help |
-| `gemma-standard` | off | 2048 | default daily work |
+| Preset | Context | Thinking | `max_tokens` | Best for |
+|---|---:|---|---:|---|
+| `gemma-turbo` | 32K | off | 512 | fastest loop |
+| `gemma-fast` | 32K | off | 1024 | quick coding help |
+| `gemma-standard` | 64K | off | 2048 | default daily work |
 
 ### 🧠 Depth presets
 
-| Preset | Thinking | `max_tokens` | Best for |
-|---|---|---:|---|
-| `gemma-deep` | on | 2048 | deeper debugging / planning |
-| `gemma-max` | on | 4096 | longest deep answers |
+| Preset | Context | Thinking | `max_tokens` | Best for |
+|---|---:|---|---:|---|
+| `gemma-deep` | 64K | on | 2048 | deeper debugging / planning |
+| `gemma-max` | 64K | on | 4096 | longest deep answers |
 
-All of these use the same Gemma baseline:
+All of these share the same Gemma runtime shape:
 
-- **32K context**
-- **`nseq-max: 1`**
+- **32K for `gemma-turbo` / `gemma-fast`**
+- **64K for `gemma-standard` / `gemma-deep` / `gemma-max`**
+- **`nseq-max: 2`**
 
 ---
 
@@ -142,6 +143,20 @@ the workflow does three things:
 3. updates OpenCode's default model through `scripts/sync_opencode_model.sh`
 
 Use `opencode/opencode.jsonc` as the tracked reference copy for the repo. The live OpenCode file in your home directory remains the active runtime file.
+
+### 🔗 OpenCode ↔ Kronk alignment
+
+OpenCode declares `limit.context` and `limit.output` per preset in `opencode.jsonc`. These values control how much context OpenCode allows before triggering compaction and how many output tokens it reserves. **They must match the corresponding Kronk preset values** — a mismatch causes either context overflow (OpenCode fills more than Kronk can handle) or unnecessary early compaction.
+
+| Preset | opencode `limit.context` | Kronk `context-window` | opencode `limit.output` | Kronk `max_tokens` |
+|---|---:|---:|---:|---:|
+| `gemma-turbo` | 32768 | 32768 | 512 | 512 |
+| `gemma-fast` | 32768 | 32768 | 1024 | 1024 |
+| `gemma-standard` | 65536 | 65536 | 2048 | 2048 |
+| `gemma-deep` | 65536 | 65536 | 2048 | 2048 |
+| `gemma-max` | 65536 | 65536 | 4096 | 4096 |
+
+> Whenever you add or change a preset, update both `opencode/opencode.jsonc` and the matching file under `kronk/presets/` to keep them in sync.
 
 ---
 
