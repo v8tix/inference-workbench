@@ -9,6 +9,7 @@ This repo uses **Kronk profiles** for saved model directories and a separate **G
 - `scripts/kronk_switch.sh` = switches saved profiles
 - `scripts/kronk_tuning_switch.sh` = switches the active tuning preset
 - `scripts/apply_llm_profile.sh` = switches a preset and restarts Kronk
+- `scripts/use_preset.sh` = interactive menu — pick and apply a preset
 
 ---
 
@@ -122,6 +123,10 @@ Direct:
 One-step apply + restart:
 
 `bash scripts/apply_llm_profile.sh gemma-standard`
+
+Or use the interactive picker:
+
+`bash scripts/use_preset.sh`
 
 That flow also syncs OpenCode's global default model to the same preset alias.
 

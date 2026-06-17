@@ -285,6 +285,12 @@ bash scripts/kronk_tuning_switch.sh gemma-standard
 bash scripts/apply_llm_profile.sh gemma-standard
 ```
 
+Interactive picker (shows all presets, marks active, applies selection):
+
+```bash
+bash scripts/use_preset.sh
+```
+
 ---
 
 ## 📚 Historical notes

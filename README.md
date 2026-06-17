@@ -67,6 +67,7 @@ cp .env.example .env
 | `bash scripts/kronk_switch.sh` | Interactive profile switcher | interactive menu: switch, save, create, quit |
 | `bash scripts/kronk_tuning_switch.sh` | Activates a Gemma tuning preset by copying it into the active config file | optional preset name |
 | `bash scripts/apply_llm_profile.sh` | Activates a tuning preset and immediately restarts Kronk | required preset name |
+| `bash scripts/use_preset.sh` | Interactive menu: pick a Gemma preset and apply it | none (interactive) |
 
 ## Script details and examples
 
@@ -175,6 +176,14 @@ bash scripts/apply_llm_profile.sh gemma-standard
 ```
 
 That command also syncs the OpenCode global default model to the same preset alias.
+
+Or use the interactive picker:
+
+```bash
+bash scripts/use_preset.sh
+```
+
+Shows a numbered menu with all presets, marks the active one, and applies the selection via `apply_llm_profile.sh`.
 
 ### OpenCode Integration
 

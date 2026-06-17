@@ -193,3 +193,21 @@ A well-configured `gemma-standard` session with a typical agentic context (~43K 
 If you are seeing `context canceled` errors or TTFT in the minutes range, that is a signal something is wrong with the profile or the session context has grown past a healthy size.
 
 > **Note:** `nseq-max: 1` was briefly used but caused `context canceled` errors when OpenCode fired a second concurrent request while a long prefill was in progress. All profiles now use `nseq-max: 2`.
+
+---
+
+## 🔄 How to switch profiles
+
+Use the interactive picker — it shows all profiles, marks the active one, and applies your selection:
+
+```bash
+bash scripts/use_preset.sh
+```
+
+Or apply a specific profile directly:
+
+```bash
+bash scripts/apply_llm_profile.sh gemma-standard
+```
+
+Both commands switch the inference server config, restart Kronk, and update OpenCode's default model.
