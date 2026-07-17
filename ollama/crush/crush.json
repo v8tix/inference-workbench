@@ -1,0 +1,72 @@
+{
+  "$schema": "https://charm.land/crush.json",
+  "providers": {
+    "ollama": {
+      "name": "Ollama",
+      "base_url": "http://localhost:11434/v1/",
+      "type": "ollama",
+      "discover_models": true,
+      "models": [
+        {
+          "id": "north-turbo",
+          "name": "North Turbo (MLX nvfp4)",
+          "context_window": 32768,
+          "default_max_tokens": 512
+        },
+        {
+          "id": "north-fast",
+          "name": "North Fast (MLX nvfp4)",
+          "context_window": 49152,
+          "default_max_tokens": 1024
+        },
+        {
+          "id": "north-standard",
+          "name": "North Standard (MLX nvfp4)",
+          "context_window": 90112,
+          "default_max_tokens": 2048
+        },
+        {
+          "id": "north-deep",
+          "name": "North Deep (MLX mxfp8)",
+          "context_window": 32768,
+          "default_max_tokens": 4096
+        },
+        {
+          "id": "qwen36-fast",
+          "name": "Qwen3.6 27B Fast (MLX nvfp4)",
+          "context_window": 65536,
+          "default_max_tokens": 1024
+        },
+        {
+          "id": "qwen36-standard",
+          "name": "Qwen3.6 27B Standard (MLX nvfp4)",
+          "context_window": 90112,
+          "default_max_tokens": 2048
+        },
+        {
+          "id": "qwen36-deep",
+          "name": "Qwen3.6 27B Deep (MLX nvfp4)",
+          "context_window": 65536,
+          "default_max_tokens": 4096
+        }
+      ]
+    }
+  },
+  "mcp": {
+    "github": {
+      "type": "stdio",
+      "command": "/Users/vrock/bin/github-mcp-dynamic"
+    },
+    "redash": {
+      "type": "stdio",
+      "command": "bash",
+      "args": ["-c", "source ~/.zshrc && npx -y @suthio/redash-mcp"]
+    }
+  },
+  "options": {
+    "skills_paths": [
+      "/Users/vrock/.claude/plugins/cache/caveman/caveman/c2ed24b3e5d4/skills",
+      "/Users/vrock/.claude/plugins/cache/cpgs-marketplace/cpgs-clg-ai/1.7.1/skills"
+    ]
+  }
+}

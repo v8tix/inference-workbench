@@ -1,0 +1,6 @@
+FROM north-mini-code-1.0:mlx-nvfp4
+PARAMETER num_ctx 32768
+PARAMETER num_predict 512
+PARAMETER temperature 0.2
+PARAMETER top_k 40
+PARAMETER top_p 0.95

@@ -3,7 +3,7 @@
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 
 KRONK_BASE="${KRONK_BASE:-$HOME/.kronk}"
 
@@ -247,7 +247,7 @@ case "$choice" in
     echo ""
     cyan "  Next steps: pull a model into the active ~/.kronk profile with"
     cyan "  kronk model pull <MODEL_ID> --local"
-    cyan "  Then sync .env if needed and start Kronk:  bash scripts/start.sh"
+    cyan "  Then sync .env if needed and start Kronk:  bash kronk/scripts/start.sh"
     exit 0
     ;;
 
@@ -306,8 +306,8 @@ ACTIVE_MODEL="$(model_name_from_dir "$KRONK_BASE" || true)"
 sync_env_model "$ACTIVE_MODEL"
 green "  ~/.kronk  →  model: $ACTIVE_MODEL"
 echo ""
-cyan "  Start Kronk:  bash scripts/start.sh"
-cyan "  Or restart:   bash scripts/restart.sh kronk"
+cyan "  Start Kronk:  bash kronk/scripts/start.sh"
+cyan "  Or restart:   bash kronk/scripts/restart.sh kronk"
 echo ""
 cyan "  Make sure .env has KRONK_MODELS set correctly and"
 cyan "  kronk/kronk.model_config.yaml has the matching config."

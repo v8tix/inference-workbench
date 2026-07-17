@@ -1,5 +1,6 @@
-# Kronk logs
-logs/
+# Logs
+kronk/logs/
+ollama/logs/
 
 # macOS
 .DS_Store

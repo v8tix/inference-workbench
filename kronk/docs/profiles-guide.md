@@ -203,7 +203,7 @@ Choose `n` in the switcher.
 After that:
 
 1. pull a model into the active `~/.kronk` with `kronk model pull <MODEL_ID> --local`
-2. make sure `.env` has the matching `KRONK_MODELS=...`
+2. make sure `../.env` has the matching `KRONK_MODELS=...`
 3. start Kronk with `bash scripts/start.sh`
 
 ---
