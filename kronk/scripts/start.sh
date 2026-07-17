@@ -2,8 +2,8 @@
 # start.sh — Start Kronk on macOS.
 #
 # Usage:
-#   bash scripts/start.sh
-#   bash scripts/start.sh --force
+#   bash kronk/scripts/start.sh
+#   bash kronk/scripts/start.sh --force
 #
 # What this does:
 #   1. Runs preflight checks
@@ -11,12 +11,12 @@
 #   3. Starts Kronk, waits for health, and warms the active model
 #
 # Update Kronk explicitly when needed:
-#   bash scripts/update.sh
+#   bash kronk/scripts/update.sh
 
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 source "$SCRIPT_LIB/health.sh"
 source "$SCRIPT_LIB/preflight.sh"
 source "$SCRIPT_LIB/kronk_runtime.sh"
@@ -26,7 +26,7 @@ for arg in "$@"; do
   case "$arg" in
     --force) FORCE=true ;;
     *)
-      echo "Usage: bash scripts/start.sh [--force]" >&2
+      echo "Usage: bash kronk/scripts/start.sh [--force]" >&2
       exit 1
       ;;
   esac

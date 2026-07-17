@@ -73,7 +73,7 @@ check_active_model_file() {
   fi
 
   red "ERROR: Active Kronk profile does not contain ${model_id}.gguf"
-  yellow "  Fix: switch to a saved profile with bash scripts/kronk_switch.sh"
+  yellow "  Fix: switch to a saved profile with bash kronk/scripts/kronk_switch.sh"
   yellow "  Or pull the model into ~/.kronk with: kronk model pull $model_id --local"
   return 1
 }

@@ -6,12 +6,14 @@
 _COMMON_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 SCRIPT_DIR="$(cd "$_COMMON_DIR/.." && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+KRONK_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$KRONK_DIR/.." && pwd)"
 SCRIPT_LIB="$SCRIPT_DIR/lib"
+COLORS_SH="$PROJECT_ROOT/lib/colors.sh"
 
-ENV_FILE="$PROJECT_ROOT/.env"
-MODEL_CONFIG="$PROJECT_ROOT/kronk/kronk.model_config.yaml"
-LOGS_DIR="$PROJECT_ROOT/logs"
+ENV_FILE="$KRONK_DIR/.env"
+MODEL_CONFIG="$KRONK_DIR/kronk.model_config.yaml"
+LOGS_DIR="$KRONK_DIR/logs"
 KRONK_BASE="${KRONK_BASE:-$HOME/.kronk}"
 
 if [[ -f "$ENV_FILE" ]]; then

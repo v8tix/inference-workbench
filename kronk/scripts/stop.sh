@@ -4,7 +4,7 @@
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 source "$SCRIPT_LIB/kronk_runtime.sh"
 
 bold "Stopping Kronk..."

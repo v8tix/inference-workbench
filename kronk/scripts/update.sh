@@ -3,14 +3,14 @@
 # update.sh — Check for and optionally install Kronk updates.
 #
 # Usage:
-#   bash scripts/update.sh
-#   bash scripts/update.sh --yes
-#   bash scripts/update.sh --check-only
+#   bash kronk/scripts/update.sh
+#   bash kronk/scripts/update.sh --yes
+#   bash kronk/scripts/update.sh --check-only
 
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 source "$SCRIPT_LIB/kronk_mgr.sh"
 
 AUTO_ARGS=()

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 source "$(dirname "${BASH_SOURCE[0]}")/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 source "$SCRIPT_LIB/health.sh"
 
 warmup_kronk_server() {

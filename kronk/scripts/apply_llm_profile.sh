@@ -2,8 +2,8 @@
 # apply_llm_profile.sh — Apply a Kronk tuning preset and restart Kronk.
 #
 # Usage:
-#   bash scripts/apply_llm_profile.sh <preset-name>
-#   bash scripts/apply_llm_profile.sh gemma-fast
+#   bash kronk/scripts/apply_llm_profile.sh <preset-name>
+#   bash kronk/scripts/apply_llm_profile.sh gemma-fast
 
 set -euo pipefail
 
@@ -11,7 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PRESET_NAME="${1:-}"
 
 if [[ -z "$PRESET_NAME" ]]; then
-  echo "Usage: bash scripts/apply_llm_profile.sh <preset-name>" >&2
+  echo "Usage: bash kronk/scripts/apply_llm_profile.sh <preset-name>" >&2
   exit 1
 fi
 

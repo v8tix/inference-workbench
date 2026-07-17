@@ -3,7 +3,7 @@
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 
 PRESET_DIR="$PROJECT_ROOT/kronk/presets"
 ACTIVE_CONFIG="$PROJECT_ROOT/kronk/kronk.model_config.yaml"
@@ -49,7 +49,7 @@ activate_preset() {
   echo "  Config : $ACTIVE_CONFIG"
   echo ""
   cyan "  Restart Kronk to apply it:"
-  cyan "  bash scripts/restart.sh"
+  cyan "  bash kronk/scripts/restart.sh"
 }
 
 bold "=== Kronk Tuning Preset Switcher ==="
@@ -66,7 +66,7 @@ if [[ ${#PRESETS[@]} -eq 0 ]]; then
 fi
 
 if [[ $# -gt 1 ]]; then
-  echo "Usage: bash scripts/kronk_tuning_switch.sh [preset-name]" >&2
+  echo "Usage: bash kronk/scripts/kronk_tuning_switch.sh [preset-name]" >&2
   exit 1
 fi
 

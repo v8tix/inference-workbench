@@ -3,18 +3,19 @@
 # sync_opencode_model.sh — Sync OpenCode's default model to a preset alias.
 #
 # Usage:
-#   bash scripts/sync_opencode_model.sh <preset-name>
+#   bash kronk/scripts/sync_opencode_model.sh <preset-name>
 
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+KRONK_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+PROJECT_ROOT="$(cd "$KRONK_DIR/.." && pwd)"
 PRESET_NAME="${1:-}"
-PRESET_FILE="$PROJECT_ROOT/kronk/presets/${PRESET_NAME}.yaml"
+PRESET_FILE="$KRONK_DIR/presets/${PRESET_NAME}.yaml"
 OPENCODE_CONFIG="$HOME/.config/opencode/opencode.jsonc"
 
 if [[ -z "$PRESET_NAME" ]]; then
-  echo "Usage: bash scripts/sync_opencode_model.sh <preset-name>" >&2
+  echo "Usage: bash kronk/scripts/sync_opencode_model.sh <preset-name>" >&2
   exit 1
 fi
 

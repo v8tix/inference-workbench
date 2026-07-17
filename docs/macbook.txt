@@ -1,0 +1,151 @@
+
+============================================================
+macOS
+============================================================
+ProductName:		macOS
+ProductVersion:		26.5.1
+BuildVersion:		25F80
+
+============================================================
+Hardware Overview
+============================================================
+      Model Name: MacBook Pro
+      Model Identifier: Mac17,8
+      Model Number: MGEC4LL/A
+      Chip: Apple M5 Pro
+      Total Number of Cores: 18 (6 Super and 12 Performance)
+      Memory: 48 GB
+      Serial Number (system): GW7MCY4NKM
+
+============================================================
+CPU Architecture
+============================================================
+Architecture: arm64
+Apple M5 Pro
+
+============================================================
+RAM
+============================================================
+Total RAM: 48.00 GB
+
+============================================================
+GPU / Metal
+============================================================
+Graphics/Displays:
+      Chipset Model: Apple M5 Pro
+      Type: GPU
+      Bus: Built-In
+      Total Number of Cores: 20
+      Vendor: Apple (0x106b)
+      Metal Support: Metal 4
+      Displays:
+          Resolution: 1920 x 1080 (1080p FHD - Full High Definition)
+          Display Type: Built-in Liquid Retina XDR Display
+          Resolution: 3456 x 2234 Retina
+          Connection Type: Internal
+
+============================================================
+Storage
+============================================================
+Filesystem        Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s3s1   926Gi    12Gi   633Gi     2%    459k  4.3G    0%   /
+
+APFS / NVMe details:
+      Capacity: 994.61 GB (994,610,155,520 bytes)
+      Mount Point: /System/Volumes/Data
+      File System: APFS
+      BSD Name: disk3s1
+          Medium Type: SSD
+          Protocol: Apple Fabric
+      Capacity: 994.61 GB (994,610,155,520 bytes)
+      Mount Point: /
+      File System: APFS
+      BSD Name: disk3s3s1
+          Medium Type: SSD
+          Protocol: Apple Fabric
+          Capacity: 1 TB (1,000,555,581,440 bytes)
+          TRIM Support: Yes
+          Model: APPLE SSD AP1024Z
+          BSD Name: disk0
+              Capacity: 576.7 MB (576,716,800 bytes)
+              BSD Name: disk0s1
+              Capacity: 994.61 GB (994,610,155,520 bytes)
+              BSD Name: disk0s2
+              Capacity: 5.37 GB (5,368,664,064 bytes)
+              BSD Name: disk0s3
+
+============================================================
+Thermal / Power Context
+============================================================
+Power source:
+Now drawing from 'AC Power'
+ -InternalBattery-0 (id=35127395)	100%; charged; 0:00 remaining present: true
+
+Power settings:
+ hibernatefile        /var/vm/sleepimage
+ networkoversleep     0
+ disksleep            10
+ sleep                1 (sleep prevented by bluetoothd, powerd)
+ hibernatemode        3
+ displaysleep         10
+ powermode            0
+
+============================================================
+Ollama Check
+============================================================
+Ollama is not installed or not in PATH.
+
+============================================================
+Kronk Check
+============================================================
+Kronk binary: /Users/vrock/go/bin/kronk
+
+Kronk version:
+kronk version 1.25.8
+
+============================================================
+Developer Environment
+============================================================
+Shell: /bin/zsh
+PATH:
+/Users/vrock/bin
+/Users/vrock/.local/bin
+/opt/homebrew/bin
+/opt/homebrew/sbin
+/Users/vrock/.nvm/versions/node/v18.20.8/bin
+/usr/local/bin
+/System/Cryptexes/App/usr/bin
+/usr/bin
+/bin
+/usr/sbin
+/sbin
+/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin
+/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin
+/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin
+/pkg/env/global/bin
+/usr/local/go/bin
+/Users/vrock/Library/Application Support/JetBrains/Toolbox/scripts
+/Users/vrock/go/bin
+
+Homebrew:
+Homebrew 5.1.15
+
+============================================================
+Local LLM Sizing Hint
+============================================================
+Detected RAM: 48 GB
+
+Recommended: 14B to 32B models depending on context size.
+Good fit: Qwen2.5-Coder 14B/32B, DeepSeek-Coder-V2-Lite, Codestral-class models if supported.
+For coding, keep enough RAM for IDE, browser, Docker, and OS.
+
+Rule of thumb:
+- 7B Q4: usually comfortable on 16-24 GB RAM
+- 14B Q4: usually comfortable on 24-32 GB RAM
+- 32B Q4: usually wants around 40-48+ GB RAM
+- Bigger context increases RAM usage significantly
+
+============================================================
+Done
+============================================================
+Report generated at: /Users/vrock/Desktop/local-llm-mac-check.txt

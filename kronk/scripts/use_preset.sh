@@ -2,12 +2,12 @@
 # use_profile.sh — Pick a Gemma profile and apply it (switch + restart + sync OpenCode).
 #
 # Usage:
-#   bash scripts/use_profile.sh
+#   bash kronk/scripts/use_profile.sh
 
 set -euo pipefail
 
 source "$(dirname "${BASH_SOURCE[0]}")/lib/common.sh"
-source "$SCRIPT_LIB/colors.sh"
+source "$COLORS_SH"
 
 NAMES=(gemma-turbo gemma-fast gemma-standard gemma-deep gemma-max)
 
