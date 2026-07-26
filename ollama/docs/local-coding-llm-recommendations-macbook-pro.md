@@ -52,7 +52,7 @@ Env vars set via launchd plist at `~/Library/LaunchAgents/homebrew.mxcl.ollama.p
 | Variable | Value | Purpose |
 |---|---|---|
 | `OLLAMA_FLASH_ATTENTION` | `1` | Reduces memory pressure on long context |
-| `OLLAMA_KV_CACHE_TYPE` | `q8_0` | Shrinks KV cache vs default precision |
+| `OLLAMA_KV_CACHE_TYPE` | `q4_0` | Halves KV cache vs default precision |
 | `OLLAMA_NUM_PARALLEL` | `1` | Prevents context memory multiplication |
 | `OLLAMA_MAX_LOADED_MODELS` | `1` | One model in memory at a time |
 

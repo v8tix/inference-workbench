@@ -36,7 +36,7 @@ Cellar template, since that's what regenerates the other).
        <key>OLLAMA_FLASH_ATTENTION</key>
        <string>1</string>
        <key>OLLAMA_KV_CACHE_TYPE</key>
-       <string>q8_0</string>
+       <string>q4_0</string>
        <key>OLLAMA_HOST</key>
        <string>0.0.0.0:11434</string>
    </dict>

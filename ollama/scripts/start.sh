@@ -20,6 +20,10 @@ echo ""
 run_preflight || exit 1
 echo ""
 
+bold "Checking runtime config..."
+bash "$SCRIPT_DIR/apply-runtime-config.sh" || true
+echo ""
+
 bold "Checking Ollama..."
 if ! is_ollama_healthy; then
   red "ERROR: Ollama is not running or unreachable at $OLLAMA_HOST"

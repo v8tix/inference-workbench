@@ -88,7 +88,7 @@ Use when quality of output matters more than speed.
 num_ctx: 32768 | num_predict: 4096 | quant: mlx-mxfp8 | weights: 31 GB
 ```
 
-> ⚠️ Uses 31 GB, peaks at ~37 GiB GPU memory. Context capped at 32K to stay within safe VRAM limit. Close memory-heavy apps before running `north-deep`.
+> ⚠️ Uses 31 GB, peaks at ~34 GiB GPU memory (q4_0 KV cache). Context capped at 32K to stay within safe VRAM limit.
 
 ---
 
