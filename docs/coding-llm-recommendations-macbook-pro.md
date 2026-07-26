@@ -1,8 +1,8 @@
 # Coding LLM Recommendations — 48 GB MacBook Pro (M5 Pro)
 
 > Workload: agentic coding, repo exploration, multi-file edits  
-> Memory budget: 32 GB + 5% tolerance (~33.6 GB) for weights + context  
-> Updated: July 16, 2026
+> KV cache: q4_0 (configurable via `ollama/ollama.env`)  
+> Updated: July 26, 2026
 
 ---
 
@@ -45,19 +45,71 @@ Start with Balanced (⭐). Move to Primary for hard tasks after confirming dev e
 
 ## Context strategy
 
-| ctx | Use |
-|---:|---|
-| 32K | Small changes, focused debugging |
-| 64K | Normal repo work, a few related files |
-| 128K | Large changes, long agent trajectories |
+KV cache at q4_0 grows at ~0.095 GiB per 1K tokens (empirical). With 37.4 GiB available for Metal:
 
-Start at 64K. Move to 128K when the agent loses relevant context. Don't increase context to compensate for poor retrieval.
+```
+safe_ctx = (37.4 GiB - weights_GiB) / 0.095 GiB × 1000
+```
+
+### Memory budget by preset
+
+| Preset | Weights | ctx | KV cache | Peak memory | Headroom |
+|---|---|---|---:|---:|---:|
+| `north-turbo` | 20 GB | 32K | 3.0 GiB | 23.0 GiB | 14.4 GiB |
+| `north-fast` | 20 GB | 49K | 4.7 GiB | 24.7 GiB | 12.7 GiB |
+| `north-standard` | 20 GB | 90K | 8.6 GiB | 28.6 GiB | 8.8 GiB |
+| `north-deep` | 31 GB | 32K | 3.0 GiB | 34.0 GiB | 3.4 GiB |
+| `qwen36-fast` | 20 GB | 65K | 6.2 GiB | 26.2 GiB | 11.2 GiB |
+| `qwen36-standard` | 20 GB | 90K | 8.6 GiB | 28.6 GiB | 8.8 GiB |
+| `qwen36-deep` | 20 GB | 65K | 6.2 GiB | 26.2 GiB | 11.2 GiB |
+
+All presets stay well within the 37.4 GiB Metal limit with comfortable headroom.
+
+### Context sizing guide
+
+| ctx | Use | Prefill speed |
+|---:|---|---|
+| 32K | Small changes, focused debugging | Fastest |
+| 49K–65K | Normal repo work, a few related files | Fast |
+| 90K | Large changes, long agent trajectories | Moderate |
+| 128K | Very large repos, multi-hour sessions | Slower prefill |
+
+Start at 90K. Only drop to 49K/65K if prefill feels too slow. Only increase to 128K if the agent consistently loses relevant context.
+
+### Can I increase north-standard beyond 90K?
+
+Yes. With q4_0 KV cache, the safe ceiling for 20 GB weights is ~183K. To go to 128K:
+
+1. Edit `ollama/modelfiles/Modelfile.north-standard`:
+   ```
+   PARAMETER num_ctx 131072
+   ```
+2. Rebuild and reload:
+   ```bash
+   bash ollama/scripts/apply_preset.sh north-standard
+   ```
+3. Also update the matching OpenCode context in `~/.config/opencode/opencode.jsonc`:
+   ```json
+   "model": "ollama/north-standard",
+   "maxContextTokens": 131072
+   ```
+
+128K peaks at ~32.2 GiB — 5.2 GiB headroom. The model validates up to 488K, so 128K is well within its tested range.
+
+> ⚠️ Higher context = slower prefills. Each request pays the cost of processing the full accumulated context. Only increase when you actually need the room.
+
+### When NOT to increase context
+
+- Prefill takes >30s → you're past the comfort zone, not under it
+- Agent is slow but doesn't forget context → your problem is retrieval, not context size
+- System-wide memory pressure is yellow/red → reduce context instead
 
 ---
 
 ## Memory pressure guide
 
 Apple Silicon uses unified memory — Ollama, macOS, IDE, Docker, browser all share the same pool.
+Metal limit: ~37.4 GiB. KV cache at q4_0 (~0.095 GiB/K).
 
 | State | Action |
 |---|---|
@@ -70,6 +122,7 @@ Apple Silicon uses unified memory — Ollama, macOS, IDE, Docker, browser all sh
 ```bash
 memory_pressure      # macOS pressure level
 sysctl vm.swapusage  # swap usage
+ollama ps             # model memory in GPU
 ```
 
 ---
