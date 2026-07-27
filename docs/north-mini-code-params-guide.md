@@ -1,7 +1,7 @@
 # North Mini-Code: Inside the Engine
 
 > What every parameter actually does, why it matters, and how to tune it like a pro.  
-> Based on the FaunDev Local AI Engineering book and Ollama's official docs.
+> Based on the "Local AI Engineering with Ollama" book and Ollama's official docs.
 
 ---
 
@@ -40,26 +40,23 @@ flowchart LR
 Your North models use a **Cohere2MoE** architecture. Think of it like a team of specialists:
 
 ```mermaid
-block-beta
-    columns 3
-    space:1
-    block:Router["🧠 Router<br/>(Gating Network)"]:1
-    space:1
-    block:Expert1["👩‍💻 Code Expert"]:1
-    block:Expert2["🔢 Math Expert"]:1
-    block:Expert3["📝 Text Expert"]:1
-    space:1
-    block:Expert4["🌍 General Expert"]:1
-    space:1
-    block:Output["Combined Output"]:1
+flowchart TD
+    Input["Input: 'Write a Python function'"]
+    Router["🧠 Router (Gating Network)"]
+    Expert1["👩‍💻 Code Expert"]
+    Expert2["🔢 Math Expert"]
+    Expert3["📝 Text Expert"]
+    Expert4["🌍 General Expert"]
+    Output["Combined Output"]
 
-    Input["Input: 'Write a Python function'"] --> Router
+    Input --> Router
     Router --> Expert1
     Router --> Expert2
     Router --> Expert4
     Expert1 --> Output
     Expert2 --> Output
     Expert4 --> Output
+    Expert3 -.->|idle| Output
 ```
 
 **How it works:** When you ask for code, the router activates the code expert + math expert + general expert. The text expert stays idle. This means:
@@ -70,24 +67,63 @@ block-beta
 
 **The catch:** The full 5.7B must still fit in memory, even though only 2B are used at once. That's why the model is 19 GB.
 
-**Source:** [IBM — Mixture of Experts](https://www.ibm.com/think/topics/mixture-of-experts) | FaunDev Ch. 4
+**Source:** [IBM — Mixture of Experts](https://www.ibm.com/think/topics/mixture-of-experts) | Local AI Engineering with Ollama Ch. 4
+
+---
+
+## 1.5 MLX: Why Apple Silicon Makes a Difference
+
+Your North models come in `mlx-nvfp4` and `mlx-mxfp8` variants. The **MLX** prefix is Apple's machine learning framework, built specifically for Apple Silicon. Understanding why matters.
+
+### The Unified Memory Advantage
+
+On a typical PC, the CPU and GPU have separate memory pools. Data must be copied back and forth — slow and inefficient. Apple Silicon uses **unified memory**: CPU, GPU, and Neural Engine share the same pool.
+
+```mermaid
+flowchart LR
+    subgraph PC["Typical PC"]
+        CPU_RAM["CPU RAM (DDR)"] <-->|"copy"| GPU_VRAM["GPU VRAM (GDDR)"]
+    end
+    subgraph Mac["Apple Silicon (M5 Pro)"]
+        Unified["48 GB Unified Memory"]
+        CPU_core["CPU"] --> Unified
+        GPU_core["GPU"] --> Unified
+        Neural["Neural Engine"] --> Unified
+    end
+```
+
+**What this means for you:** MLX does not copy data between CPU and GPU — it just points to the same memory. Your M5 Pro's 48 GB is one pool accessible by everything. Whisper (speech) and Ollama (LLM) can run on different compute units simultaneously without contention.
+
+### MLX Whisper Performance
+
+The MEAP book benchmarks show why MLX matters for speech — and the same principles apply to your MLX-quantized models:
+
+| Task | Standard Approach | MLX | Speedup |
+|------|------------------|-----|---------|
+| Whisper tiny (60s clip) | 8 s (CPU) | 2 s | ~4× |
+| Whisper small (60s clip) | 28 s (CPU) | 6 s | ~5× |
+| Whisper medium (60s clip) | 75 s (CPU) | 14 s | ~5× |
+| Whisper large-v3 (60s clip) | 210 s (CPU) | 38 s | ~6× |
+
+The same principle applies to your north-mini-code models: MLX-quantized formats (nvfp4, mxfp8) let the model run on GPU directly without conversion, keeping inference fast and efficient.
+
+**Source:** *Build Applications with Local AI Models on a Mac* Ch. 9 (MLX Whisper)
 
 ---
 
 ## 2. Quantization: Shrinking the Model
 
 ```mermaid
-block-beta
-    columns 5
-    block:FP32["FP32<br/>32 bits<br/>22 GB"]:1
-    block:FP16["FP16<br/>16 bits<br/>11 GB"]:1
-    block:MXFP8["MXFP8<br/>8 bits<br/>31 GB"]:1
-    block:NVFP4["NVFP4<br/>4 bits<br/>19 GB"]:1
-    block:INT4["INT4<br/>4 bits<br/>~5 GB"]:1
+flowchart LR
+    FP32["FP32<br/>32 bits<br/>22 GB"]
+    FP16["FP16<br/>16 bits<br/>11 GB"]
+    MXFP8["MXFP8<br/>8 bits<br/>31 GB"]
+    NVFP4["NVFP4<br/>4 bits<br/>19 GB"]
+    INT4["INT4<br/>4 bits<br/>~5 GB"]
 
-    FP32 -->|"÷2 size"| FP16
-    FP16 -->|"÷2 size"| MXFP8
-    MXFP8 -->|"÷2 size"| NVFP4
+    FP32 -->|÷2 size| FP16
+    FP16 -->|÷2 size| MXFP8
+    MXFP8 -->|÷2 size| NVFP4
 ```
 
 **The trick:** Quantization trades precision for memory. A weight stored with 4 bits instead of 32 bits takes 8× less space but is also 8× less precise.
@@ -103,7 +139,7 @@ block-beta
 
 **MXFP8** is the OCP Microscaling standard — 8-bit with per-block scaling. It's actually a **larger model** (8.7B vs 5.7B parameters) at higher precision, hence the 31 GB size.
 
-**Source:** FaunDev Ch. 4 ("Quantization: Trade Precision You Don't Need for Memory You Do") | [arXiv: Microscaling Data Formats](https://arxiv.org/abs/2310.10537)
+**Source:** Local AI Engineering with Ollama Ch. 4 ("Quantization: Trade Precision You Don't Need for Memory You Do") | [arXiv: Microscaling Data Formats](https://arxiv.org/abs/2310.10537)
 
 ---
 
@@ -136,16 +172,18 @@ flowchart LR
 journalctl -u ollama --no-pager --pager-end | grep -E "truncating"
 ```
 
-**Source:** FaunDev Ch. 8 ("Silent Truncation: The Trap")
+**Source:** Local AI Engineering with Ollama Ch. 8 ("Silent Truncation: The Trap")
 
 ### Context Memory Math
 
 ```mermaid
-block-beta
-    columns 1
-    block:Memory["Total Memory = Model Weights + KV Cache"]:1
-    block:KV["KV Cache = num_ctx × bytes_per_token × num_layers × 2"]:1
-    block:Example["Example: 90,000 ctx × 2 bytes × 40 layers × 2 = ~14 GB overhead"]:1
+flowchart TD
+    Memory["Total Memory = Model Weights + KV Cache"]
+    KV["KV Cache = num_ctx × bytes_per_token × num_layers × 2"]
+    Example["Example: 90,000 ctx × 2 bytes × 40 layers × 2 = ~14 GB overhead"]
+
+    Memory --> KV
+    KV --> Example
 ```
 
 **Your profiles and their memory cost:**
@@ -159,7 +197,7 @@ block-beta
 
 Your M5 Pro has 48 GB unified memory. north-standard uses ~33 GB — leaving 15 GB for macOS and your apps. Comfortable.
 
-**Source:** FaunDev Ch. 4 ("The KV Cache"), Ch. 8 | [Ollama Context Length](https://docs.ollama.com/context-length)
+**Source:** Local AI Engineering with Ollama Ch. 4 ("The KV Cache"), Ch. 8 | [Ollama Context Length](https://docs.ollama.com/context-length)
 
 ---
 
@@ -170,12 +208,12 @@ After the model generates logits (raw scores for every possible next token), the
 ### Temperature
 
 ```mermaid
-block-beta
-    columns 3
-    block:Logits["Raw Scores<br/>mat: 6.0<br/>floor: 5.0<br/>couch: 4.0<br/>roof: 2.0"]:1
-    space:1
-    block:Sampling["Temperature →<br/>Softmax ←"]:1
-    block:Prob["Probabilities<br/>T=0.2: mat 85%<br/>T=0.2: floor 10%<br/>T=1.0: mat 40%<br/>T=1.0: floor 30%"]:1
+flowchart LR
+    Logits["Raw Scores<br/>mat: 6.0<br/>floor: 5.0<br/>couch: 4.0<br/>roof: 2.0"]
+    Sampling["Temperature + Softmax"]
+    Prob["Probabilities<br/>T=0.2: mat 85%, floor 10%<br/>T=1.0: mat 40%, floor 30%"]
+
+    Logits --> Sampling --> Prob
 ```
 
 **Think of it like this:** The model says "mat is the best answer, floor is second best, couch is third." Temperature controls how much you let the model pick #2 or #3 instead of #1.
@@ -190,7 +228,7 @@ block-beta
 
 **Your profiles use `temperature: 0.2`** — this is ideal for code. You want deterministic, correct output. For creative writing, bump to 0.7. For poetry, 1.0.
 
-**Source:** FaunDev Ch. 4 ("Temperature"), Ch. 9 | [Ollama Modelfile](https://docs.ollama.com/modelfile)
+**Source:** Local AI Engineering with Ollama Ch. 4 ("Temperature"), Ch. 9 | [Ollama Modelfile](https://docs.ollama.com/modelfile)
 
 ### Top-K and Top-P (The Filters)
 
@@ -234,22 +272,17 @@ They work **together** — top-K first cuts the list, then top-P trims it furthe
 
 **Your profiles:** `top_k: 40, top_p: 0.95` — conservative, focused on quality. For more diversity, lower top-K to 20 and top-P to 0.9.
 
-**Source:** FaunDev Ch. 4 | [Ollama Modelfile](https://docs.ollama.com/modelfile)
+**Source:** Local AI Engineering with Ollama Ch. 4 | [Ollama Modelfile](https://docs.ollama.com/modelfile)
 
 ---
 
 ## 5. Output Length (num_predict)
 
 ```mermaid
-block-beta
-    columns 1
-    block:Gen["Model generates tokens..."]:1
-    block:Check["Count hit num_predict?"]:1
-    block:Stop["🛑 Stop generating"]:1
-
-    Gen --> Check
-    Check -->|"No"| Gen
-    Check -->|"Yes"| Stop
+flowchart TD
+    Gen["Model generates tokens..."] --> Check{"Count hit num_predict?"}
+    Check -->|No| Gen
+    Check -->|Yes| Stop["🛑 Stop generating"]
 ```
 
 **Default is `-1` (unlimited).** Your profiles cap it to prevent runaway generation:
@@ -270,14 +303,14 @@ block-beta
 North-standard is a 19 GB model. Loading it takes ~5-10 seconds. **KeepAlive** keeps it loaded in memory between requests.
 
 ```mermaid
-block-beta
-    columns 1
-    block:Timeline["KeepAlive = 5m (your config)"]:1
-    block:Request1["Request 1 → Model loads → 🚀 Instant response"]:1
-    block:Idle["5 minutes of idle time"]:1
-    block:Request2["Request 2 → Same model → 🚀 No reload needed"]:1
-    block:Unload["After 5 idle minutes → Model unloads → Memory freed"]:1
+flowchart TD
+    Request1["Request 1 → Model loads → 🚀 Instant response"]
+    Idle["5 minutes of idle time"]
+    Request2["Request 2 → Same model → 🚀 No reload needed"]
+    Unload["After 5 idle minutes → Model unloads → Memory freed"]
+    Title["KeepAlive = 5m (your config)"]
 
+    Title --> Request1
     Request1 --> Idle
     Idle --> Request2
     Request2 --> Idle
@@ -293,7 +326,7 @@ ollama ps
 # north-standard:latest    abc123   19 GB     100% GPU   90112      4 minutes from now
 ```
 
-**Source:** FaunDev Ch. 11 ("Keep-Alive and Memory Control")
+**Source:** Local AI Engineering with Ollama Ch. 11 ("Keep-Alive and Memory Control")
 
 ---
 
@@ -361,7 +394,7 @@ curl -s http://localhost:11434/api/chat -d '{
 }'
 ```
 
-**Source:** FaunDev Ch. 9 ("Using the API to Control the Model")
+**Source:** Local AI Engineering with Ollama Ch. 9 ("Using the API to Control the Model")
 
 ---
 
@@ -369,7 +402,6 @@ curl -s http://localhost:11434/api/chat -d '{
 
 | Source | Link |
 |--------|------|
-| FaunDev — Local AI Engineering with Ollama | `/Users/vrock/Documents/Books/AI/faundev/...` |
 | Ollama Modelfile Reference | [docs.ollama.com/modelfile](https://docs.ollama.com/modelfile) |
 | Ollama Context Length | [docs.ollama.com/context-length](https://docs.ollama.com/context-length) |
 | IBM — Mixture of Experts | [ibm.com/think/topics/mixture-of-experts](https://www.ibm.com/think/topics/mixture-of-experts) |
