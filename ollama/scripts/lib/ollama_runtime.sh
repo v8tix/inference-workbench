@@ -5,16 +5,25 @@ source "$COLORS_SH"
 source "$SCRIPT_LIB/health.sh"
 
 # Preset → modelfile + created model name
-declare -A PRESET_MODELFILE=(
-  [north-turbo]="Modelfile.north-turbo"
-  [north-fast]="Modelfile.north-fast"
-  [north-standard]="Modelfile.north-standard"
-  [north-deep]="Modelfile.north-deep"
-  [devstral-fast]="Modelfile.devstral-fast"
-  [devstral-standard]="Modelfile.devstral-standard"
-  [qwen-fast]="Modelfile.qwen-fast"
-  [qwen-standard]="Modelfile.qwen-standard"
-)
+get_modelfile() {
+  case "$1" in
+    north-turbo)     echo "Modelfile.north-turbo" ;;
+    north-fast)      echo "Modelfile.north-fast" ;;
+    north-standard)  echo "Modelfile.north-standard" ;;
+    north-deep)      echo "Modelfile.north-deep" ;;
+    qwen36-turbo)    echo "Modelfile.qwen36-turbo" ;;
+    qwen36-fast)     echo "Modelfile.qwen36-fast" ;;
+    qwen36-standard) echo "Modelfile.qwen36-standard" ;;
+    qwen36-deep)     echo "Modelfile.qwen36-deep" ;;
+    *)               echo "" ;;
+  esac
+}
+
+is_valid_preset() {
+  local result
+  result="$(get_modelfile "$1")"
+  [[ -n "$result" ]]
+}
 
 get_model_name() {
   echo "$1"
@@ -22,12 +31,15 @@ get_model_name() {
 
 build_model() {
   local preset="$1"
-  local modelfile="$MODELFILES_DIR/${PRESET_MODELFILE[$preset]}"
+  local modelfile_name
+  modelfile_name="$(get_modelfile "$preset")"
 
-  if [[ -z "${PRESET_MODELFILE[$preset]:-}" ]]; then
+  if [[ -z "$modelfile_name" ]]; then
     red "ERROR: Unknown preset: $preset"
     return 1
   fi
+
+  local modelfile="$MODELFILES_DIR/$modelfile_name"
 
   if [[ ! -f "$modelfile" ]]; then
     red "ERROR: Modelfile not found: $modelfile"
