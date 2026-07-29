@@ -300,15 +300,15 @@ flowchart TD
 
 ## 6. KeepAlive and Memory Control
 
-North-standard is a 19 GB model. Loading it takes ~5-10 seconds. **KeepAlive** keeps it loaded in memory between requests.
+North-standard is a 19 GB model. Loading it takes ~5-10 seconds. **KeepAlive** keeps it loaded in GPU memory between requests — controlled by the `OLLAMA_KEEP_ALIVE` env var in `ollama/ollama.env`.
 
 ```mermaid
 flowchart TD
     Request1["Request 1 → Model loads → 🚀 Instant response"]
-    Idle["5 minutes of idle time"]
+    Idle["4 hours of idle time"]
     Request2["Request 2 → Same model → 🚀 No reload needed"]
-    Unload["After 5 idle minutes → Model unloads → Memory freed"]
-    Title["KeepAlive = 5m (your config)"]
+    Unload["After 4 idle hours → Model unloads → Memory freed"]
+    Title["KeepAlive = 4h (ollama.env)"]
 
     Title --> Request1
     Request1 --> Idle
@@ -323,8 +323,10 @@ ollama ps
 
 # Your output will look like:
 # NAME                     ID       SIZE      PROCESSOR  CONTEXT    UNTIL
-# north-standard:latest    abc123   19 GB     100% GPU   90112      4 minutes from now
+# qwen36-standard:latest    abc123   19 GB     100% GPU   90112      3 hours from now
 ```
+
+**Config location:** `ollama/ollama.env` → `OLLAMA_KEEP_ALIVE=4h`.
 
 **Source:** Local AI Engineering with Ollama Ch. 11 ("Keep-Alive and Memory Control")
 

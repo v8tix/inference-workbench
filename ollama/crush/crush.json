@@ -32,6 +32,12 @@
           "default_max_tokens": 4096
         },
         {
+          "id": "qwen36-turbo",
+          "name": "Qwen3.6 27B Turbo (MLX nvfp4)",
+          "context_window": 32768,
+          "default_max_tokens": 512
+        },
+        {
           "id": "qwen36-fast",
           "name": "Qwen3.6 27B Fast (MLX nvfp4)",
           "context_window": 65536,

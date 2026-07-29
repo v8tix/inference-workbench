@@ -24,6 +24,7 @@ OLLAMA_KV_CACHE_TYPE="${OLLAMA_KV_CACHE_TYPE:-q4_0}"
 OLLAMA_NUM_PARALLEL="${OLLAMA_NUM_PARALLEL:-1}"
 OLLAMA_MAX_LOADED_MODELS="${OLLAMA_MAX_LOADED_MODELS:-1}"
 OLLAMA_HOST="${OLLAMA_HOST:-0.0.0.0:11434}"
+OLLAMA_KEEP_ALIVE="${OLLAMA_KEEP_ALIVE:-4h}"
 
 if [[ -f "$RUNTIME_ENV" ]]; then
   set -o allexport; source "$RUNTIME_ENV"; set +o allexport
@@ -49,6 +50,8 @@ generate_plist() {
 		<string>${OLLAMA_NUM_PARALLEL}</string>
 		<key>OLLAMA_MAX_LOADED_MODELS</key>
 		<string>${OLLAMA_MAX_LOADED_MODELS}</string>
+		<key>OLLAMA_KEEP_ALIVE</key>
+		<string>${OLLAMA_KEEP_ALIVE}</string>
 	</dict>
 	<key>KeepAlive</key>
 	<true/>
@@ -105,6 +108,7 @@ echo "    OLLAMA_KV_CACHE_TYPE    = $OLLAMA_KV_CACHE_TYPE"
 echo "    OLLAMA_HOST             = $OLLAMA_HOST"
 echo "    OLLAMA_NUM_PARALLEL     = $OLLAMA_NUM_PARALLEL"
 echo "    OLLAMA_MAX_LOADED_MODELS = $OLLAMA_MAX_LOADED_MODELS"
+echo "    OLLAMA_KEEP_ALIVE        = $OLLAMA_KEEP_ALIVE"
 echo ""
 yellow "  Edit ollama/ollama.env and re-run this script to change values."
 yellow "  brew services start ollama overwrites the plist — re-run after it."
