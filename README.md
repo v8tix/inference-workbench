@@ -127,12 +127,12 @@ ollama create qwen36-deep     -f ollama/modelfiles/Modelfile.qwen36-deep
 # Download GGUF base model for Qwen3-Coder-Next (31 GB)
 hf download lovedheart/Qwen3-Coder-Next-REAP-48B-A3B-GGUF \
   --include "Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf" \
-  --local-dir ollama/models/qwen3-coder-next/
+  --local-dir ~/.ollama/models/sources/qwen3-coder-next/
 
 # Requantize to Q3_K_M (22 GB) for better memory fit
 llama-quantize --allow-requantize \
-  ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf \
-  ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf \
+  ~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf \
+  ~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf \
   Q3_K_M
 
 # Build GGUF presets (from Q3_K_M)

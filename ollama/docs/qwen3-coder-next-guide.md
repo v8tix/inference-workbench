@@ -35,14 +35,14 @@ Available types: Q4_K_M, Q3_K_L, Q3_K_M, Q3_K_S, Q2_K, IQ4_NL, IQ3_M, IQ2_M
 
 ```bash
 # Download GGUF (31 GB for Q4_K_XL)
-hf download lovedheart/Qwen3-Coder-Next-REAP-48B-A3B-GGUF \
+HF_TOKEN="your_token" hf download lovedheart/Qwen3-Coder-Next-REAP-48B-A3B-GGUF \
   --include "Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf" \
-  --local-dir ollama/models/qwen3-coder-next/
+  --local-dir ~/.ollama/models/sources/qwen3-coder-next/
 
-# Requantize to Q3_K_M (22 GB)
+# Requantize to Q3_K_M (22 GB) — saves 9 GB for more context
 llama-quantize --allow-requantize \
-  ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf \
-  ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf \
+  ~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf \
+  ~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf \
   Q3_K_M
 
 # Build presets
