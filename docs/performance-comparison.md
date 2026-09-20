@@ -1,23 +1,23 @@
-# Performance Comparison: Gemma GGUF (Kronk) vs North MLX (Ollama)
+# Performance Comparison: GGUF (llama.cpp) vs MLX (Ollama)
 
 > Hardware: MacBook Pro M5 Pro, 48 GB unified memory  
-> Measured: July 2026, from production logs (OpenCode agentic sessions)
+> Measured: July–September 2026, from production logs (OpenCode agentic sessions)
 
 ---
 
 ## Summary
 
-| Metric | Gemma 4 26B (GGUF Q4_K_M) | North Mini Code 1.0 (MLX nvfp4) | Qwen3.6 27B (MLX nvfp4) |
-|---|---:|---:|---:|
-| Runner | llama.cpp / Metal | MLX | MLX |
-| Params | 26B dense | 30B MoE (~3B active) | 27B dense |
-| Weights on disk | ~15 GB | 20 GB | 20 GB |
-| **Prefill (cold, avg)** | **~990 tok/s** | **~445 tok/s (47K ctx)** | **~130 tok/s** |
-| **Prefill (cold, 24K req)** | **~24s TTFT** | **~46s TTFT** | **~184s TTFT** |
-| **Generation speed** | **27–37 tok/s** | **~91 tok/s** | ~70 tok/s (est.) |
-| Cache hit TTFT | 0.5–2.5s | <2s (47K matched) | — |
-| Context limit | 64K (Kronk) | 88K (north-standard) | 88K (qwen36-standard) |
-| Coding score | — | 33.4 AA Index | 77.2% SWE-bench |
+| Metric | Gemma 4 26B (GGUF Q4_K_M) | North Mini Code 1.0 (MLX nvfp4) | Qwen3.6 27B (MLX nvfp4) | Qwen3.8 27B (GGUF Q4_K_M) | Qwen3-Coder-Next 48B (GGUF Q4_K_XL) |
+|---|---:|---:|---:|---:|---:|
+| Runner | llama.cpp / Metal | MLX | MLX | llama.cpp / Metal | llama.cpp / Metal |
+| Params | 26B dense | 30B MoE (~3B active) | 27B dense | 27B dense | 48B MoE (~3B active) |
+| Weights on disk | ~15 GB | 20 GB | 20 GB | 18 GB | 33 GB |
+| **Prefill (cold, avg)** | **~990 tok/s** | **~445 tok/s (47K ctx)** | **~130 tok/s** | **~990 tok/s** | **~500 tok/s (est.)** |
+| **Prefill (cold, 24K req)** | **~24s TTFT** | **~46s TTFT** | **~184s TTFT** | **~24s TTFT** | **~48s TTFT (est.)** |
+| **Generation speed** | **27–37 tok/s** | **~91 tok/s** | ~70 tok/s (est.) | **27–37 tok/s** | **~80 tok/s (est.)** |
+| Cache hit TTFT | 0.5–2.5s | <2s (47K matched) | — | — | — |
+| Context limit | 64K (Kronk) | 88K (north-standard) | 88K (qwen36-standard) | 88K (qwen38-standard) | 88K (qwen3-coder-next-standard) |
+| Coding score | — | 33.4 AA Index | 77.2% SWE-bench | — | — |
 
 ---
 
@@ -65,6 +65,14 @@ Flat ~130 tok/s throughout — dense model, no MoE speedup. Each 2048-token batc
 
 **At 24K tokens: ~3 min TTFT** — too slow for interactive agentic use.
 
+### Qwen3.8 27B — GGUF Q4_K_M (Ollama, llama.cpp + Metal)
+
+Same llama.cpp/Metal backend as Gemma. Prefill should match Gemma's ~990 tok/s — fast enough for interactive use at 24K context (~24s TTFT). Generation is dense 27B at 27–37 tok/s. Good when MLX models aren't available or don't fit.
+
+### Qwen3-Coder-Next REAP 48B — GGUF Q4_K_XL (Ollama, llama.cpp + Metal)
+
+MoE architecture (~3B active per token) on GGUF backend. Prefill expected around ~500 tok/s (48B is large but MoE routing limits per-batch compute). Generation should be faster than dense GGUF models due to active-param sparsity — estimated ~80 tok/s. At 33 GB weights, this is the tightest memory fit on this machine.
+
 ---
 
 ## Generation speed
@@ -74,6 +82,8 @@ Flat ~130 tok/s throughout — dense model, no MoE speedup. Each 2048-token batc
 | Gemma 4 26B (GGUF) | 27–37 tok/s | Includes speculative decode boost; degrades at longer ctx |
 | North Mini Code 1.0 (MLX) | ~91 tok/s | MoE: only ~3B params active per token |
 | Qwen3.6 27B (MLX) | ~70 tok/s (est.) | Dense 27B, slightly slower than North |
+| Qwen3.8 27B (GGUF) | 27–37 tok/s | Same lama.cpp backend as Gemma |
+| Qwen3-Coder-Next 48B (GGUF) | ~80 tok/s (est.) | MoE (~3B active) on llama.cpp backend |
 
 North generates at **~2.5× the speed of Gemma** despite having a 30B parameter count.
 Reason: MoE architecture activates only ~3B params per forward pass. Gemma is fully dense.
@@ -102,13 +112,16 @@ For OpenCode agentic sessions (typical 24–48K token prompts, cold start):
 - **Gemma** prefills in ~24s at 24K, ~48s at 48K. Fast enough for interactive use.
 - **North** prefills in ~46s at 24K, ~100s at 48K. Borderline for interactive use — but Ollama's prefix cache helps a lot on second+ turns within a session.
 - **Qwen3.6** prefills in ~3 min at 24K. Impractical as daily driver.
+- **Qwen3.8** matches Gemma's prefill (~24s at 24K). Reliable GGUF backend.
+- **Qwen3-Coder-Next** prefills in ~48s at 24K (estimated). Best quality but highest memory pressure.
 
 For **generation quality** (after first token arrives):
 - North at ~91 tok/s feels fast — a 400-token answer arrives in ~4s
 - Gemma at ~27–37 tok/s is noticeably slower — same answer takes 11–15s
 - Qwen3.6 is slower still but produces higher-quality outputs for hard problems
+- Qwen3-Coder-Next at ~80 tok/s (est.) bridges the gap: fast generation with 48B model quality
 
-**Conclusion**: Gemma wins on cold-start TTFT; North wins on generation speed and coding quality per active parameter. Qwen3.6 is a specialist for hard problems, not a daily driver.
+**Conclusion**: Gemma (GGUF) wins on cold-start TTFT. North (MLX) wins on generation speed. Qwen3-Coder-Next (GGUF) offers the best quality-to-speed ratio for hard problems, at the cost of higher memory pressure. Qwen3.6 is best reserved for specific hard problems where its 77.2% SWE-bench score matters more than speed.
 
 ---
 

@@ -5,39 +5,9 @@
       "npm": "@ai-sdk/openai-compatible",
       "name": "Ollama Local",
       "options": {
-        "baseURL": "http://localhost:11434/v1"
+        "baseURL": "http://192.168.100.11:11434/v1"
       },
       "models": {
-        "north-turbo": {
-          "name": "North Turbo",
-          "family": "north-mini-code",
-          "limit": { "context": 32768, "output": 512 },
-          "cost": { "input": 0, "output": 0 }
-        },
-        "north-fast": {
-          "name": "North Fast",
-          "family": "north-mini-code",
-          "limit": { "context": 49152, "output": 1024 },
-          "cost": { "input": 0, "output": 0 }
-        },
-        "north-standard": {
-          "name": "North Standard",
-          "family": "north-mini-code",
-          "limit": { "context": 90112, "output": 2048 },
-          "cost": { "input": 0, "output": 0 }
-        },
-        "north-deep": {
-          "name": "North Deep",
-          "family": "north-mini-code",
-          "limit": { "context": 32768, "output": 4096 },
-          "cost": { "input": 0, "output": 0 }
-        },
-        "qwen36-turbo": {
-          "name": "Qwen3.6 Turbo",
-          "family": "qwen36",
-          "limit": { "context": 32768, "output": 512 },
-          "cost": { "input": 0, "output": 0 }
-        },
         "qwen36-fast": {
           "name": "Qwen3.6 Fast",
           "family": "qwen36",
@@ -55,9 +25,48 @@
           "family": "qwen36",
           "limit": { "context": 65536, "output": 4096 },
           "cost": { "input": 0, "output": 0 }
+        },
+        "qwen38-fast": {
+          "name": "Qwen3.8 Fast",
+          "family": "qwen38",
+          "reasoning": false,
+          "limit": { "context": 65536, "output": 1024 },
+          "cost": { "input": 0, "output": 0 }
+        },
+        "qwen38-standard": {
+          "name": "Qwen3.8 Standard",
+          "family": "qwen38",
+          "reasoning": false,
+          "limit": { "context": 90112, "output": 2048 },
+          "cost": { "input": 0, "output": 0 }
+        },
+        "qwen38-deep": {
+          "name": "Qwen3.8 Deep",
+          "family": "qwen38",
+          "reasoning": false,
+          "limit": { "context": 32768, "output": 4096 },
+          "cost": { "input": 0, "output": 0 }
+        },
+        "qwen3-coder-next-standard": {
+          "name": "Qwen3-Coder-Next Standard",
+          "family": "qwen3-coder-next",
+          "limit": { "context": 90112, "output": 2048 },
+          "cost": { "input": 0, "output": 0 }
+        },
+        "qwen3-coder-next-fast": {
+          "name": "Qwen3-Coder-Next Fast",
+          "family": "qwen3-coder-next",
+          "limit": { "context": 65536, "output": 1024 },
+          "cost": { "input": 0, "output": 0 }
+        },
+        "qwen3-coder-next-deep": {
+          "name": "Qwen3-Coder-Next Deep",
+          "family": "qwen3-coder-next",
+          "limit": { "context": 32768, "output": 4096 },
+          "cost": { "input": 0, "output": 0 }
         }
       }
     }
   },
-  "model": "ollama/qwen36-standard"
+  "model": "ollama/qwen3-coder-next-standard"
 }

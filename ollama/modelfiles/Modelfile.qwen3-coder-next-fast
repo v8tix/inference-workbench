@@ -1,0 +1,6 @@
+FROM /Users/vrock/Public/V8TIX/repos/inference-workbench/ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf
+PARAMETER temperature 1.0
+PARAMETER top_k 40
+PARAMETER top_p 0.95
+PARAMETER num_ctx 90112
+PARAMETER num_predict 1024
