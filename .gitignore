@@ -7,3 +7,9 @@ ollama/logs/
 
 # Model weights (too large for git)
 ollama/models/
+
+# IDE
+.idea/
+
+# Temp
+temp/
