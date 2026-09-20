@@ -4,3 +4,12 @@ ollama/logs/
 
 # macOS
 .DS_Store
+
+# Model weights (too large for git)
+ollama/models/
+
+# IDE
+.idea/
+
+# Temp
+temp/
