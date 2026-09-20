@@ -18,7 +18,7 @@ The GGUF version from `lovedheart/Qwen3-Coder-Next-REAP-48B-A3B-GGUF` works reli
 
 The base model is Q4_K_XL (~33 GB). For this 48 GB Mac, it was requantized to **Q3_K_M (~22 GB on disk, 24 GB in GPU memory)** — the sweet spot that enables 128K context while staying within the Metal limit.
 
-The quantized file is at `ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf`.
+The quantized file is at `~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf`.
 
 To requantize to a different level:
 
