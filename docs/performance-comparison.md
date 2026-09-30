@@ -7,17 +7,19 @@
 
 ## Summary
 
-| Metric | Gemma 4 26B (GGUF Q4_K_M) | North Mini Code 1.0 (MLX nvfp4) | Qwen3.6 27B (MLX nvfp4) | Qwen3.8 27B (GGUF Q4_K_M) | Qwen3-Coder-Next 48B (GGUF Q4_K_XL) |
+| Metric | Gemma 4 26B (GGUF Q4_K_M) | North Mini Code 1.0 (MLX nvfp4) | Qwen3.6 27B (MLX nvfp4) | Qwen3.8 27B (MLX nvfp4 / mxfp8) | Qwen3-Coder-Next 48B (GGUF Q4_K_XL, pre-requantize) |
 |---|---:|---:|---:|---:|---:|
-| Runner | llama.cpp / Metal | MLX | MLX | llama.cpp / Metal | llama.cpp / Metal |
+| Runner | llama.cpp / Metal | MLX | MLX | MLX | llama.cpp / Metal |
 | Params | 26B dense | 30B MoE (~3B active) | 27B dense | 27B dense | 48B MoE (~3B active) |
-| Weights on disk | ~15 GB | 20 GB | 20 GB | 18 GB | 33 GB |
-| **Prefill (cold, avg)** | **~990 tok/s** | **~445 tok/s (47K ctx)** | **~130 tok/s** | **~990 tok/s** | **~500 tok/s (est.)** |
-| **Prefill (cold, 24K req)** | **~24s TTFT** | **~46s TTFT** | **~184s TTFT** | **~24s TTFT** | **~48s TTFT (est.)** |
-| **Generation speed** | **27–37 tok/s** | **~91 tok/s** | ~70 tok/s (est.) | **27–37 tok/s** | **~80 tok/s (est.)** |
+| Weights on disk | ~15 GB | 20 GB | 20 GB | 18 GB (nvfp4) / 31 GB (mxfp8) | 33 GB (now 24 GB as Q3_K_M) |
+| **Prefill (cold, avg)** | **~990 tok/s** | **~445 tok/s (47K ctx)** | **~130 tok/s** | not measured | **~500 tok/s (est.)** |
+| **Prefill (cold, 24K req)** | **~24s TTFT** | **~46s TTFT** | **~184s TTFT** | not measured | **~48s TTFT (est.)** |
+| **Generation speed** | **27–37 tok/s** | **~91 tok/s** | ~70 tok/s (est.) | not measured | **~80 tok/s (est.)** |
 | Cache hit TTFT | 0.5–2.5s | <2s (47K matched) | — | — | — |
-| Context limit | 64K (Kronk) | 88K (north-standard) | 88K (qwen36-standard) | 88K (qwen38-standard) | 88K (qwen3-coder-next-standard) |
+| Context limit | 64K (Kronk) | 88K (north-standard) | 88K (qwen36-standard) | 88K (qwen38-standard) | 128K (qwen3-coder-next-standard, Q3_K_M) |
 | Coding score | — | 33.4 AA Index | 77.2% SWE-bench | — | — |
+
+> The Qwen3.8 figures previously shown (~990 tok/s prefill, 27–37 tok/s generation) were identical to the Gemma column, not Qwen3.8 measurements, and the presets have since moved from GGUF to MLX. The Qwen3-Coder-Next column predates the Q3_K_M requantization: prefill is slower now (~190–400 tok/s) and generation is ~32–34 tok/s (see the [preset guide](../ollama/docs/preset-guide.md)).
 
 ---
 
@@ -65,9 +67,9 @@ Flat ~130 tok/s throughout — dense model, no MoE speedup. Each 2048-token batc
 
 **At 24K tokens: ~3 min TTFT** — too slow for interactive agentic use.
 
-### Qwen3.8 27B — GGUF Q4_K_M (Ollama, llama.cpp + Metal)
+### Qwen3.8 27B — MLX nvfp4 / mxfp8 (Ollama, MLX runner)
 
-Same llama.cpp/Metal backend as Gemma. Prefill should match Gemma's ~990 tok/s — fast enough for interactive use at 24K context (~24s TTFT). Generation is dense 27B at 27–37 tok/s. Good when MLX models aren't available or don't fit.
+Not benchmarked yet. The presets run on the MLX runner like Qwen3.6, a dense 27B model, so expect Qwen3.6-like behavior (slow cold prefill at long context) rather than Gemma's GGUF numbers. Measure before relying on any figure here.
 
 ### Qwen3-Coder-Next REAP 48B — GGUF Q4_K_XL (Ollama, llama.cpp + Metal)
 
