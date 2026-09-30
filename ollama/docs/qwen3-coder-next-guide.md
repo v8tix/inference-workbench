@@ -67,7 +67,7 @@ ollama create qwen3-coder-next-deep     -f ollama/modelfiles/Modelfile.qwen3-cod
 | `qwen3-coder-next-standard` ⭐ | 24 GB | 128K | 12.2 GiB | 36.2 GiB | 1.2 GiB ✅ |
 | `qwen3-coder-next-deep` | 24 GB | 64K | 6.1 GiB | 30.1 GiB | 7.3 GiB ✅ |
 
-All fit within the 37.4 GiB Metal limit. The Q3_K_M quantization freed 9 GB compared to Q4_K_XL.
+All fit within the 37.4 GiB Metal limit on paper — these are estimates, and `-standard` has little headroom. See the [incident note](../../docs/qwen38-memory-incident-2026-08-15.md) before relying on 128K. The Q3_K_M quantization freed 9 GB compared to Q4_K_XL.
 
 ## Verifying
 

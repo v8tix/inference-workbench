@@ -26,7 +26,7 @@ With 48 GB unified memory shared between CPU and GPU:
 
 GPU memory available for Metal: ~37.4 GiB (OS + system reserves ~10.6 GiB of 48 GB).
 
-KV cache is configured at **q4_0** (launchd plist). Halving cache precision vs default halves memory growth:
+KV cache is configured at **q4_0** (via `~/.homebrew/services/ollama.env`, applied by `ollama/scripts/apply-runtime-config.sh`). Halving cache precision vs default halves memory growth:
 
 KV cache growth rate (empirical, q4_0): ~0.095 GiB per 1K context tokens.
 
@@ -34,6 +34,8 @@ Safe context ceiling formula:
 ```
 safe_ctx = (37.4 GiB - weights_GiB) / 0.095 GiB × 1000
 ```
+
+> ⚠️ The formula is optimistic — real peak use ran ~59% above it in a sustained test. See [qwen38-memory-incident-2026-08-15.md](qwen38-memory-incident-2026-08-15.md).
 
 Examples:
 - 20 GB weights → safe_ctx ≈ 183K tokens — north-standard/qwen36-standard at 90K is well within budget

@@ -33,7 +33,7 @@ fi
 green "  Ollama is running ✓"
 echo ""
 
-PRESET="${OLLAMA_ACTIVE_PRESET:-north-standard}"
+PRESET="${OLLAMA_ACTIVE_PRESET:-qwen36-standard}"
 bold "Loading preset: $PRESET"
 build_model "$PRESET" || exit 1
 echo ""

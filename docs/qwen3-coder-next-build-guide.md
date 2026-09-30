@@ -109,6 +109,8 @@ PARAMETER num_predict 2048
 
 `-standard` is the tightest. Close other memory-heavy apps before using it, or fall back to `-fast`.
 
+> ⚠️ These KV figures are estimates. On `qwen38-standard`, a formula-approved 128K context locked the machine up and real peak use ran ~59% above the estimate ([incident write-up](qwen38-memory-incident-2026-08-15.md)). The 0.095 GiB/1K rate there is for a different model, so the gap isn't proven for coder-next, but `-standard` has only 1.2 GiB of headroom and hasn't been validated under sustained load. Check `ollama ps` and `sysctl vm.swapusage` before trusting it.
+
 ## 6. Verify
 
 ```bash

@@ -47,7 +47,7 @@ Context limits are calibrated against observed GPU memory usage on this hardware
 
 ## Runtime config
 
-Env vars set via launchd plist at `~/Library/LaunchAgents/homebrew.mxcl.ollama.plist`:
+Env vars set via `~/.homebrew/services/ollama.env` (Homebrew merges them into the generated launchd plist at `~/Library/LaunchAgents/sh.brew.ollama.plist`):
 
 | Variable | Value | Purpose |
 |---|---|---|
