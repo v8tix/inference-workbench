@@ -19,7 +19,7 @@ echo ""
 stop_active_model
 echo ""
 
-PRESET="${OLLAMA_ACTIVE_PRESET:-north-standard}"
+PRESET="${OLLAMA_ACTIVE_PRESET:-qwen36-standard}"
 bold "Reloading preset: $PRESET"
 build_model "$PRESET" || exit 1
 

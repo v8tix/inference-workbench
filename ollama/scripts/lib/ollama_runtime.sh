@@ -7,10 +7,6 @@ source "$SCRIPT_LIB/health.sh"
 # Preset → modelfile + created model name
 get_modelfile() {
   case "$1" in
-    north-turbo)     echo "Modelfile.north-turbo" ;;
-    north-fast)      echo "Modelfile.north-fast" ;;
-    north-standard)  echo "Modelfile.north-standard" ;;
-    north-deep)      echo "Modelfile.north-deep" ;;
     qwen36-turbo)    echo "Modelfile.qwen36-turbo" ;;
     qwen36-fast)     echo "Modelfile.qwen36-fast" ;;
     qwen36-standard) echo "Modelfile.qwen36-standard" ;;

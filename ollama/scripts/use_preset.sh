@@ -13,10 +13,6 @@ source "$SCRIPT_LIB/ollama_runtime.sh"
 # name|model|quant|family|context|max output|weights
 # (plain table instead of `declare -A`: macOS ships bash 3.2, which has no associative arrays)
 PRESETS=(
-  "north-turbo|North Mini Code 1.0|mlx-nvfp4|Speed|32K|512|20 GB"
-  "north-fast|North Mini Code 1.0|mlx-nvfp4|Speed|48K|1024|20 GB"
-  "north-standard|North Mini Code 1.0|mlx-nvfp4|Speed|64K|2048|20 GB"
-  "north-deep|North Mini Code 1.0|mlx-mxfp8|Depth|32K|4096|31 GB"
   "qwen36-turbo|Qwen3.6 27B Coding|mlx-nvfp4|Speed|32K|512|20 GB"
   "qwen36-fast|Qwen3.6 27B Coding|mlx-nvfp4|Speed|64K|1024|20 GB"
   "qwen36-standard|Qwen3.6 27B Coding|mlx-nvfp4|Speed|88K|2048|20 GB"
