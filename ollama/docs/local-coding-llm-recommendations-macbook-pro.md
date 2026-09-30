@@ -55,8 +55,10 @@ Env vars set via `~/.homebrew/services/ollama.env` (Homebrew merges them into th
 | `OLLAMA_KV_CACHE_TYPE` | `q4_0` | Halves KV cache vs default precision |
 | `OLLAMA_NUM_PARALLEL` | `1` | Prevents context memory multiplication |
 | `OLLAMA_MAX_LOADED_MODELS` | `1` | One model in memory at a time |
+| `OLLAMA_GPU_OVERHEAD` | `2147483648` | 2 GiB hard memory reserve |
+| `OLLAMA_KEEP_ALIVE` | `4h` | Keep the model loaded between requests |
 
-See `runtime-config-guide.md` for how to edit and reload the plist.
+See `runtime-config-guide.md` for how to edit `ollama/ollama.env` and apply it (Homebrew regenerates the plist; don't edit it).
 
 ---
 
