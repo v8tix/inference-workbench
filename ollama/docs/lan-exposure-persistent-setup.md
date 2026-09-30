@@ -41,6 +41,6 @@ This uses the same `~/.homebrew/services/ollama.env` mechanism as the rest of th
 
 Point `opencode.jsonc`'s provider `baseURL` at the laptop's LAN IP, not `localhost`:
 ```jsonc
-"ollama": { "options": { "baseURL": "http://192.168.100.11:11434/v1" } }
+"ollama": { "options": { "baseURL": "http://192.168.100.41:11434/v1" } }
 ```
-Find the LAN IP with `ifconfig | grep "inet 192.168"`.
+Find the LAN IP with `ipconfig getifaddr <interface>` (e.g. `en8` for the USB ethernet adapter, `en0` for Wi-Fi). Prefer the ethernet address if the machine is cabled, and check `route -n get default | grep interface` to see which one is the active route.
