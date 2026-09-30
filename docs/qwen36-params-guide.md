@@ -163,6 +163,69 @@ journalctl -u ollama --no-pager --pager-end | grep -E "truncating"
 
 ### Context Memory Math
 
+Qwen3.6 27B is a hybrid model (`qwen3_5`, from `ollama show --verbose`): **64 layers, of which only 16 use full attention** and keep a KV cache that grows with context. The other 48 are linear-attention (Gated DeltaNet) layers with a constant-size state. The full-attention layers have 4 KV heads × 256 dims.
+
+```mermaid
+flowchart TD
+    Memory["Total Memory = Model Weights + KV Cache + runtime overhead"]
+    KV["KV Cache = num_ctx × 2 (K and V) × 16 full-attention layers × 4 KV heads × 256 dim × bytes per value"]
+    Example["Example: 90,112 ctx × 2 × 16 × 4 × 256 × 2 bytes (fp16) ≈ 5.5 GiB"]
+    Memory --> KV
+    KV --> Example
+```
+
+The KV cache is stored at `q4_0` here (`OLLAMA_KV_CACHE_TYPE`), which shrinks it further, so the theoretical figure is an upper bound on the cache itself. The figures that used to be here (`80 layers × 2 bytes`, ~29 GB of KV cache) ignored grouped KV heads and the linear-attention layers and overstated the cache several times over.
+
+**Your profiles and their memory cost:**
+
+| Profile | num_ctx | Model size | KV cache, theoretical fp16 | KV cache, repo estimate¹ | Peak, repo estimate¹ |
+|---------|---------|------------|---------------------------|--------------------------|----------------------|
+| qwen36-turbo | 32,768 | 19 GB | 2.0 GiB | 3.1 GiB | ~23 GiB |
+| qwen36-fast | 65,536 | 19 GB | 4.0 GiB | 6.2 GiB | ~26 GiB |
+| **qwen36-standard** | **90,112** | **19 GB** | **5.5 GiB** | **8.6 GiB** | **~29 GiB** |
+| qwen36-deep | 65,536 | 19 GB | 4.0 GiB | 6.2 GiB | ~26 GiB |
+
+¹ The repo-wide estimate of 0.095 GiB per 1K tokens, used in [coding-llm-recommendations-macbook-pro.md](coding-llm-recommendations-macbook-pro.md).
+
+Your M5 Pro has 48 GB of unified memory, but the GPU can use only about **37.4 GiB** of it (Metal limit), and macOS, your IDE and Docker share the rest. By the repo estimate `qwen36-standard` peaks near 29 GiB, leaving ~8 GiB of headroom. That is an estimate, not a measurement: on the sibling `qwen38-standard` (same architecture, 64 layers) a real 68K-token session peaked at 39 GiB, about 59% above its estimate, so real use can exceed these figures. See [qwen38-memory-incident-2026-08-15.md](qwen38-memory-incident-2026-08-15.md). Watch `ollama ps` and `sysctl vm.swapusage` under real load.
+
+**Source:** Local AI Engineering with Ollama Ch. 4 ("Quantization: Trade Precision You Don't Need for Memory You Do") | [arXiv: Microscaling Data Formats](https://arxiv.org/abs/2310.10537)
+
+---
+
+## 3. The Context Window (num_ctx)
+
+This is the #1 parameter that bites people. Here's why:
+
+### The Silent Truncation Trap
+
+```mermaid
+flowchart LR
+    subgraph Normal["num_ctx = 90,112"]
+        A[System Prompt: 40 tokens] --> B[Tools: 110 tokens]
+        B --> C[Conversation: 80,000 tokens]
+        C --> D[Your New Prompt: 50 tokens]
+        D --> E[✅ Model sees everything]
+    end
+    subgraph Overflow["num_ctx too small"]
+        F[System Prompt: 40 tokens] --> G[Tools: 110 tokens]
+        G --> H[Conversation: 80,000 tokens]
+        H -->|"✂️ TRUNCATED!"| I[Only last 4,096 tokens kept]
+        I --> J[Model 'forgets' the beginning]
+    end
+```
+
+**The problem:** When your input exceeds `num_ctx`, Ollama **silently truncates the middle**. Your system prompt, tools, or early conversation just vanish. The model has no idea they existed.
+
+```bash
+# Check if truncation is happening
+journalctl -u ollama --no-pager --pager-end | grep -E "truncating"
+```
+
+**Source:** Local AI Engineering with Ollama Ch. 8 ("Silent Truncation: The Trap")
+
+### Context Memory Math
+
 ```mermaid
 flowchart TD
     Memory["Total Memory = Model Weights + KV Cache"]
