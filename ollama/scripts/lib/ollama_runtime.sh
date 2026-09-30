@@ -96,6 +96,11 @@ sync_opencode_model() {
     return 0
   fi
 
+  if ! jq -e . "$opencode_config" >/dev/null 2>&1; then
+    yellow "  Warning: jq cannot parse $opencode_config (trailing comma or comment?) — skipping OpenCode sync"
+    return 0
+  fi
+
   if ! jq -e --arg key "$preset" '.provider.ollama.models[$key]' "$opencode_config" >/dev/null 2>&1; then
     yellow "  Warning: OpenCode config missing ollama preset alias: $preset — skipping sync"
     return 0
