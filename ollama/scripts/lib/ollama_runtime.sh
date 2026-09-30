@@ -15,6 +15,9 @@ get_modelfile() {
     qwen36-fast)     echo "Modelfile.qwen36-fast" ;;
     qwen36-standard) echo "Modelfile.qwen36-standard" ;;
     qwen36-deep)     echo "Modelfile.qwen36-deep" ;;
+    qwen38-fast)     echo "Modelfile.qwen38-fast" ;;
+    qwen38-standard) echo "Modelfile.qwen38-standard" ;;
+    qwen38-deep)     echo "Modelfile.qwen38-deep" ;;
     *)               echo "" ;;
   esac
 }
@@ -31,6 +34,7 @@ get_model_name() {
 
 build_model() {
   local preset="$1"
+  local force="${2:-0}"
   local modelfile_name
   modelfile_name="$(get_modelfile "$preset")"
 
@@ -46,7 +50,16 @@ build_model() {
     return 1
   fi
 
-  yellow "  Building model '$preset' from $modelfile..."
+  if [[ "$force" != "1" ]] && ollama list | awk '{print $1}' | grep -qx "${preset}:latest"; then
+    green "  Model '$preset' already exists ✓ (skipping build — use --rebuild to force)"
+    return 0
+  fi
+
+  if [[ "$force" == "1" ]]; then
+    yellow "  Rebuilding model '$preset' from $modelfile (--rebuild)..."
+  else
+    yellow "  Building model '$preset' from $modelfile..."
+  fi
   ollama create "$preset" -f "$modelfile"
   green "  Model '$preset' ready ✓"
 }
