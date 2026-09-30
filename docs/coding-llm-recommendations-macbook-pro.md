@@ -53,6 +53,8 @@ KV cache at q4_0 grows at ~0.095 GiB per 1K tokens (empirical). With 37.4 GiB av
 safe_ctx = (37.4 GiB - weights_GiB) / 0.095 GiB × 1000
 ```
 
+> ⚠️ Treat this formula as optimistic. It assumes the full 37.4 GiB is free at request time, and real peak use ran ~59% above it in a sustained test (39.01 GiB at 68K tokens on `qwen38-standard`). A formula-approved 128K locked the machine up. See [qwen38-memory-incident-2026-08-15.md](qwen38-memory-incident-2026-08-15.md). The 0.095 GiB/1K rate was measured on the Qwen 27B models, so the coder-next rows below are estimates.
+
 ### Memory budget by preset
 
 | Preset | Weights | ctx | KV cache | Peak memory | Headroom |
@@ -66,12 +68,12 @@ safe_ctx = (37.4 GiB - weights_GiB) / 0.095 GiB × 1000
 | `qwen36-deep` | 20 GB | 65K | 6.2 GiB | 26.2 GiB | 11.2 GiB |
 | `qwen38-fast` | 18 GB | 65K | 6.2 GiB | 24.2 GiB | 13.2 GiB |
 | `qwen38-standard` | 18 GB | 90K | 8.6 GiB | 26.6 GiB | 10.8 GiB |
-| `qwen38-deep` | 18 GB | 32K | 3.0 GiB | 21.0 GiB | 16.4 GiB |
+| `qwen38-deep` | 32 GB | 32K | 3.1 GiB | 35.1 GiB | 2.3 GiB |
 | `qwen3-coder-next-fast` | 24 GB | 88K | 8.4 GiB | 32.4 GiB | 5.0 GiB ✅ |
 | `qwen3-coder-next-standard` ⭐ | 24 GB | 128K | 12.2 GiB | 36.2 GiB | 1.2 GiB ✅ |
 | `qwen3-coder-next-deep` | 24 GB | 64K | 6.1 GiB | 30.1 GiB | 7.3 GiB ✅ |
 
-All presets fit within the 37.4 GiB Metal limit. The 48B model at Q3_K_M (24 GB) now comfortably supports 128K context.
+All presets fit within the 37.4 GiB Metal limit **on paper**. `qwen38-deep` (2.3 GiB) and `qwen3-coder-next-standard` (1.2 GiB) have the thinnest margins. Read every row as "should be fine", not "guaranteed", and validate under sustained load (`ollama ps`, `sysctl vm.swapusage`) before relying on the largest contexts. Don't run `qwen38-deep` alongside another large model.
 
 ### Context sizing guide
 
@@ -86,7 +88,7 @@ Start at 90K. Only drop to 49K/65K if prefill feels too slow. Only increase to 1
 
 ### Can I increase qwen3-coder-next-standard beyond 128K?
 
-That's the safe ceiling for 24 GB weights at Q3_K_M. To go higher, quantize further to Q2_K (~17 GB, 215K ctx) — the original GGUF from `lovedheart/Qwen3-Coder-Next-REAP-48B-A3B-GGUF` can be requantized with `llama-quantize`.
+128K is already the ceiling the estimate allows for 24 GB weights at Q3_K_M, with only 1.2 GiB of headroom, and it hasn't been validated under sustained load. Don't raise it. To go higher, quantize further to Q2_K (~17 GB, 215K ctx) — the original GGUF from `lovedheart/Qwen3-Coder-Next-REAP-48B-A3B-GGUF` can be requantized with `llama-quantize`.
 
 See [qwen3-coder-next-guide.md](../ollama/docs/qwen3-coder-next-guide.md#quantization) for details.
 
