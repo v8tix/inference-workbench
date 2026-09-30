@@ -9,21 +9,32 @@ How Ollama's configured as a background service on this machine.
 Ollama runs as a launchd user agent via Homebrew Services — starts at login, restarts on crash, no terminal needed.
 
 - Managed via `brew services {start,stop,restart} ollama`
-- Env override file: `~/.homebrew/services/ollama.env` — the real source of truth, not any plist
+- Env override file: `~/.homebrew/services/ollama.env` — the source of truth; the plist is generated from it
 - Log: `/opt/homebrew/var/log/ollama.log`
 - API: `http://localhost:11434`
 
 ---
 
-## ⚠️ This Homebrew install uses the JSON API tap
+## How the plist is generated (verified 2026-09-30, Homebrew 7.0.7)
 
-`brew config` shows "Core tap JSON" — no local `homebrew/core` clone. That means `brew services restart` regenerates the launchd job fresh from Homebrew's API cache every single time, and **ignores**:
+The launchd plist, `~/Library/LaunchAgents/sh.brew.ollama.plist`, is **generated output, not a file to edit**. The label is `sh.brew.ollama`. Older Homebrew used `homebrew.mxcl.ollama`, and that file no longer exists.
 
-- `/opt/homebrew/Cellar/ollama/<version>/homebrew.mxcl.ollama.plist`
-- `~/Library/LaunchAgents/homebrew.mxcl.ollama.plist`
-- the per-keg formula copy at `/opt/homebrew/opt/ollama/.brew/ollama.rb`
+Every `brew services start` or `restart` runs this flow (Homebrew `services/cli.rb` and `service.rb`):
 
-Confirmed by testing (2026-08-15): edits to all three survived only until the next restart, then reverted with zero effect on the actual running job (verified via `launchctl print`, which separates a job's own `environment` from `inherited environment` — a `launchctl setenv` workaround can make things *look* fixed while the real problem is still there).
+1. Delete the installed plist.
+2. Build a new one from the formula's `service do … end` block. For ollama that is `ollama serve`, `keep_alive`, `working_dir`, the log path, and two env vars: `OLLAMA_FLASH_ATTENTION=1` and **`OLLAMA_KV_CACHE_TYPE=q8_0`**.
+3. Merge `~/.homebrew/services/ollama.env` on top (`KEY=value` per line, user values win).
+4. Write the result to `~/Library/LaunchAgents/sh.brew.ollama.plist` and load it.
+
+That is why the plist "survives" restarts: it is rebuilt each time with your env file merged in. It also explains the 2026-08-15 incident. The formula's own default is `q8_0`, so a plist that didn't carry your `q4_0` silently ran `q8_0`.
+
+**Test:** I hand-edited the plist (added a marker variable and set `OLLAMA_KV_CACHE_TYPE=q8_0`), ran `brew services restart ollama`, and the plist came back byte-identical to the original. The marker was gone and the running job had `q4_0`. Hand edits are lost. Only the env file persists.
+
+Consequences:
+- Put settings in `ollama/ollama.env` (applied by `apply-runtime-config.sh`), never in the plist.
+- Don't write `homebrew.mxcl.ollama.plist` and `launchctl load` it yourself. The label no longer matches, so you'd get a second job next to `sh.brew.ollama`.
+
+---
 
 ## Active environment variables
 

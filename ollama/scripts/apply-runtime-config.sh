@@ -1,12 +1,11 @@
 #!/usr/bin/env bash
 # apply-runtime-config.sh — Apply ollama/ollama.env via Homebrew's services env override.
 #
-# This Homebrew install uses the JSON API tap (no local homebrew/core clone), which means
-# `brew services restart` regenerates the launchd job fresh from Homebrew's API cache on
-# every run — it does NOT read the Cellar plist, the LaunchAgents plist, or the formula's
-# per-keg .rb copy. Editing any of those is a dead end (confirmed by testing).
+# `brew services start/restart` deletes ~/Library/LaunchAgents/sh.brew.ollama.plist and regenerates
+# it from the formula's service block (which defaults OLLAMA_KV_CACHE_TYPE to q8_0), then merges
+# ~/.homebrew/services/ollama.env on top. Hand edits to the plist are lost on the next restart.
 #
-# The one mechanism that actually persists across `brew services restart` AND `brew upgrade`
+# The mechanism that persists across `brew services restart` AND `brew upgrade`
 # is $HOMEBREW_USER_CONFIG_HOME/services/ollama.env (defaults to ~/.homebrew/services/ollama.env),
 # documented in `brew services --help`. This script writes ollama/ollama.env into that file
 # and restarts the service.
@@ -51,4 +50,4 @@ yellow "  Active config:"
 sed 's/^/    /' "$SERVICES_ENV_FILE"
 echo ""
 yellow "  Verify with:"
-echo '    launchctl print gui/$(id -u)/homebrew.mxcl.ollama | grep -A12 "environment = {"'
+echo '    launchctl print gui/$(id -u)/sh.brew.ollama | grep -A12 "environment = {"'

@@ -24,7 +24,7 @@ This uses the same `~/.homebrew/services/ollama.env` mechanism as the rest of th
 
 3. Verify it's in the job's *own* environment, not just an inherited session var:
    ```bash
-   launchctl print gui/$(id -u)/homebrew.mxcl.ollama | grep -A6 '^\tenvironment = {'
+   launchctl print gui/$(id -u)/sh.brew.ollama | grep -A6 '^\tenvironment = {'
    # OLLAMA_HOST should appear here, not only under "inherited environment"
    ```
 

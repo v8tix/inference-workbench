@@ -25,7 +25,7 @@ A genuine 68,608-token coding session (76% of the 90,112 ceiling) completed, but
 - The 0.095 GiB/1K figure was measured on the dense Qwen 27B models. It does **not** describe other architectures.
 - Verify the setting that's actually running, not the one you declared:
   ```bash
-  launchctl print gui/$(id -u)/homebrew.mxcl.ollama | grep -A12 "environment = {"
+  launchctl print gui/$(id -u)/sh.brew.ollama | grep -A12 "environment = {"
   ```
   Read the job's own `environment` block. `inherited environment` can hide a stale `launchctl setenv`.
 - Watch `ollama ps`, `sysctl vm.swapusage` and `memory_pressure` under real sustained load, not a quick test.
