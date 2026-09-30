@@ -19,16 +19,19 @@ PRESETS=(
   "qwen36-deep|Qwen3.6 27B Coding|mlx-nvfp4|Depth|64K|4096|20 GB"
   "qwen38-fast|Qwen3.8 27B|mlx-nvfp4|Speed|64K|1024|18 GB"
   "qwen38-standard|Qwen3.8 27B|mlx-nvfp4|Speed|88K|2048|18 GB"
-  "qwen38-deep|Qwen3.8 27B|mlx-mxfp8|Depth|32K|4096|32 GB"
+  "qwen38-deep|Qwen3.8 27B|mlx-mxfp8|Depth|32K|4096|31 GB"
+  "qwen3-coder-next-fast|Qwen3-Coder-Next 48B|gguf-q3|Speed|88K|1024|24 GB"
+  "qwen3-coder-next-standard|Qwen3-Coder-Next 48B|gguf-q3|Quality|128K|2048|24 GB"
+  "qwen3-coder-next-deep|Qwen3-Coder-Next 48B|gguf-q3|Depth|64K|4096|24 GB"
 )
 
 ACTIVE="${OLLAMA_ACTIVE_PRESET:-}"
 
 bold "=== Ollama Preset Selector ==="
 echo ""
-printf "  %-4s %-20s %-22s %-12s %-6s %-8s %-8s %s\n" \
+printf "  %-4s %-26s %-22s %-12s %-6s %-8s %-8s %s\n" \
   "#" "Preset" "Model" "Quant" "Family" "Context" "Max out" "Weights"
-printf "  %-4s %-20s %-22s %-12s %-6s %-8s %-8s %s\n" \
+printf "  %-4s %-26s %-22s %-12s %-6s %-8s %-8s %s\n" \
   "---" "--------------------" "----------------------" "------------" "------" "--------" "--------" "-------"
 
 i=0
@@ -36,7 +39,7 @@ for row in "${PRESETS[@]}"; do
   IFS='|' read -r name model quant family ctx maxout weights <<< "$row"
   i=$((i+1))
   marker=""; [[ "$name" == "$ACTIVE" ]] && marker=" ◀ active"
-  printf "  %2d) %-20s %-22s %-12s %-6s %-8s %-8s %s%s\n" \
+  printf "  %2d) %-26s %-22s %-12s %-6s %-8s %-8s %s%s\n" \
     "$i" "$name" "$model" "$quant" "$family" "$ctx" "$maxout" "$weights" "$marker"
 done
 
