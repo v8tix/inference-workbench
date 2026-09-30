@@ -50,19 +50,19 @@
         "qwen3-coder-next-standard": {
           "name": "Qwen3-Coder-Next Standard",
           "family": "qwen3-coder-next",
-          "limit": { "context": 90112, "output": 2048 },
+          "limit": { "context": 131072, "output": 2048 },
           "cost": { "input": 0, "output": 0 }
         },
         "qwen3-coder-next-fast": {
           "name": "Qwen3-Coder-Next Fast",
           "family": "qwen3-coder-next",
-          "limit": { "context": 65536, "output": 1024 },
+          "limit": { "context": 90112, "output": 1024 },
           "cost": { "input": 0, "output": 0 }
         },
         "qwen3-coder-next-deep": {
           "name": "Qwen3-Coder-Next Deep",
           "family": "qwen3-coder-next",
-          "limit": { "context": 32768, "output": 4096 },
+          "limit": { "context": 65536, "output": 4096 },
           "cost": { "input": 0, "output": 0 }
         }
       }
