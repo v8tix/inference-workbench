@@ -14,6 +14,9 @@ get_modelfile() {
     qwen38-fast)     echo "Modelfile.qwen38-fast" ;;
     qwen38-standard) echo "Modelfile.qwen38-standard" ;;
     qwen38-deep)     echo "Modelfile.qwen38-deep" ;;
+    qwen3-coder-next-fast)     echo "Modelfile.qwen3-coder-next-fast" ;;
+    qwen3-coder-next-standard) echo "Modelfile.qwen3-coder-next-standard" ;;
+    qwen3-coder-next-deep)     echo "Modelfile.qwen3-coder-next-deep" ;;
     *)               echo "" ;;
   esac
 }

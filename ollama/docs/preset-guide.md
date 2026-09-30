@@ -230,15 +230,15 @@ num_ctx: 65536 | num_predict: 4096 | quant: gguf-q3 | weights: 24 GB
 
 ## 🧭 Simple recommendation
 
-If you don't know where to start:
+The default preset is **`qwen3-coder-next-standard`** ⭐ (`OLLAMA_ACTIVE_PRESET` in `ollama/.env`, also what `start.sh` and `restart.sh` fall back to). If you don't know where to start:
 
-1. Start with **`north-standard`** ⭐
-2. Move down to **`north-fast`** or **`north-turbo`** if the loop feels too slow
-3. Move up to **`north-deep`** when harder reasoning or longer answers are genuinely needed
-4. Switch to **`qwen36-standard`** when you want a different model family's perspective
-5. Use **`qwen36-deep`** for long answers from Qwen when memory is already at 31 GB (north-deep running)
-6. Try **`qwen38-standard`** for vision-capable GGUF-based model
-7. Move to **`qwen3-coder-next-standard`** for the best quality local model (33 GB, needs headroom)
+1. Start with **`qwen3-coder-next-standard`** ⭐ — best quality local model, 128K context, 24 GB of weights
+2. Drop to **`qwen3-coder-next-fast`** (88K) if memory pressure turns yellow or swap grows — `-standard` has only ~1.2 GiB of estimated headroom
+3. Use **`qwen3-coder-next-deep`** (64K, 4K output) for long answers
+4. Switch to **`qwen38-standard`** for a vision-capable model, or **`qwen36-standard`** for a different model family's perspective
+5. Use **`qwen38-deep`** only when nothing else is loaded — 31 GB of weights
+
+Switch with `bash ollama/scripts/use_preset.sh`. The North presets are no longer installed or built by the scripts.
 
 ---
 
@@ -246,14 +246,13 @@ If you don't know where to start:
 
 | Want | Use |
 |---|---|
-| Fast loop, short answers | `north-turbo` or `north-fast` |
-| Normal daily coding | `north-standard` ⭐ |
-| Hard problems, long answers | `north-deep` |
+| Normal daily coding | `qwen3-coder-next-standard` ⭐ |
+| Faster loop, more headroom | `qwen3-coder-next-fast` |
+| Hard problems, long answers | `qwen3-coder-next-deep` |
+| Newest model, vision-capable | `qwen38-standard` |
 | Alternative model, quick | `qwen36-fast` |
 | Alternative model, long session | `qwen36-standard` |
-| Long answers from Qwen | `qwen36-deep` |
-| Newest model, vision-capable | `qwen38-standard` |
-| Best quality coding | `qwen3-coder-next-standard` ⭐ |
+| Long answers from Qwen | `qwen36-deep` or `qwen38-deep` |
 
 ---
 
