@@ -20,12 +20,12 @@ The base model is Q4_K_XL (~33 GB). For this 48 GB Mac, it was requantized to **
 
 The quantized file is at `~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf`.
 
-To requantize to a different level:
+To requantize to a different level (replace `Q3_K_M` in the output name and the last argument):
 
 ```bash
 llama-quantize --allow-requantize \
-  ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf \
-  ollama/models/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf \
+  ~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q4_K_XL.gguf \
+  ~/.ollama/models/sources/qwen3-coder-next/Qwen3-Coder-Next-REAP-48B-A3B-Q3_K_M.gguf \
   Q3_K_M
 ```
 
@@ -54,7 +54,7 @@ ollama create qwen3-coder-next-deep     -f ollama/modelfiles/Modelfile.qwen3-cod
 ## Presets
 
 | Preset | Context | Output | Weights |
-|---|---|---|---:|---:|
+|---|---:|---:|---:|
 | `qwen3-coder-next-fast` | 88K | 1,024 | 24 GB |
 | `qwen3-coder-next-standard` ⭐ | **128K** | 2,048 | 24 GB |
 | `qwen3-coder-next-deep` | 64K | 4,096 | 24 GB |
@@ -87,5 +87,7 @@ ollama create qwen3-coder-next-standard -f ollama/modelfiles/Modelfile.qwen3-cod
 ollama create qwen3-coder-next-fast    -f ollama/modelfiles/Modelfile.qwen3-coder-next-fast
 ollama create qwen3-coder-next-deep    -f ollama/modelfiles/Modelfile.qwen3-coder-next-deep
 ```
+
+For the full build story (why, how, memory budget) see [qwen3-coder-next-build-guide.md](../../docs/qwen3-coder-next-build-guide.md).
 
 See also [mlx-runner-troubleshooting.md](../../docs/mlx-runner-troubleshooting.md) for MLX runner crash debugging.
